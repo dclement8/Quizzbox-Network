@@ -77,14 +77,14 @@ CREATE TABLE scores(
         score     Int ,
         dateHeure Datetime ,
         typeJeu   Int ,
-        id        Int NOT NULL ,
+        id_joueur        Int NOT NULL ,
         id_quizz  Int NOT NULL ,
-        PRIMARY KEY (id ,id_quizz )
+        PRIMARY KEY (id_joueur ,id_quizz )
 )ENGINE=InnoDB;
 
 ALTER TABLE quizz ADD CONSTRAINT FK_quizz_id_categorie FOREIGN KEY (id_categorie) REFERENCES categorie(id);
 ALTER TABLE question ADD CONSTRAINT FK_question_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);
 ALTER TABLE reponse ADD CONSTRAINT FK_reponse_id_question FOREIGN KEY (id_question) REFERENCES question(id);
 ALTER TABLE reponse ADD CONSTRAINT FK_reponse_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);
-ALTER TABLE scores ADD CONSTRAINT FK_scores_id FOREIGN KEY (id) REFERENCES joueur(id);
+ALTER TABLE scores ADD CONSTRAINT FK_scores_id_joueur FOREIGN KEY (id_joueur) REFERENCES joueur(id);
 ALTER TABLE scores ADD CONSTRAINT FK_scores_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);
