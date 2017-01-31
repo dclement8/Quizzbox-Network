@@ -32,7 +32,7 @@ $app->get('/',
 $app->get('/categories',
 	function (Request $req, Response $resp, $args)
 	{
-		return (new quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		return (new quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
 	}
 )->setName('categories');
 
