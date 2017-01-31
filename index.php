@@ -15,11 +15,33 @@ $app = new \Slim\App($c);
 
 // -------------------
 
-$app->get('/',
+/*$app->get('/',
 	function (Request $req, Response $resp, $args)
 	{
 		return (new quizzbox\control\quizzboxcontrol($this))->exemple($req, $resp, $args);
 	}
-)->setName('exemple');
+)->setName('exemple');*/
+
+$app->get('/',
+	function (Request $req, Response $resp, $args)
+	{
+		return (new quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+	}
+)->setName('accueil');
+
+$app->get('/categories',
+	function (Request $req, Response $resp, $args)
+	{
+		return (new quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+	}
+)->setName('categories');
+
+$app->get('/categories/{id}',
+	function (Request $req, Response $resp, $args)
+	{
+		return (new quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
+	}
+)->setName('afficherCategories');
+
 
 $app->run();

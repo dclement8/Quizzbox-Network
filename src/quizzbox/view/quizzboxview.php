@@ -77,20 +77,120 @@ class quizzboxview
 	// -----------
 	
 	
-    private function exemple($req, $resp, $args)
+	/* private function exemple($req, $resp, $args)
 	{
 		$html = "";
 		return $html;
-    }
+    }*/
+	
+	private function calculDifficulteQuizz($quizz)
+	{
+		// Un coefficient d'une question peut avoir comme valeur : 1, 2, 3, 4 ou 5
+		// Plus le coefficient est élevé, plus la question est difficile.
+		
+		$questions = \quizzbox\model\question::where('id_quizz', $quizz->id)->get();
+		
+		$cumulCoefficients = 0;
+		foreach($questions as $uneQuestion)
+		{
+			$cumulCoefficients = $cumulCoefficients + $uneQuestion->coefficient;
+		}
+		
+		$moyenneDifficulte = $cumulCoefficients / (\quizzbox\model\question::where('id_quizz', $unQuizz->id)->count());
+		
+		$difficulte = "Facile"; // moyenneDifficulte < 2
+		if($moyenneDifficulte >= 2)
+		{
+			if($moyenneDifficulte >= 3)
+			{
+				if($moyenneDifficulte >= 4)
+				{
+					$difficulte = "Très difficile";
+				}
+				else
+				{
+					$difficulte = "Difficile";
+				}
+			}
+			else
+			{
+				$difficulte = "Moyen";
+			}
+		}
+		
+		return $difficulte;
+	}
+	
+	
+	private function afficherCategories($req, $resp, $args)
+	{
+		$html = "<ul class='elements'>";
+		foreach($this->data as $uneCategorie)
+		{
+			$html .= "
+				<li class='block'>
+					<h1>
+						".$uneCategorie->nom."
+					</h1>
+					<p>
+						".$uneCategorie->description."
+					</p>
+					<a class='button' href='./categories/".$uneCategorie->id."'>
+						Consulter les quizz
+					</a>
+				</li>
+			";
+		}
+		$html = "</ul>";
+		
+		return $html;
+	}
+	
+	private function afficherQuizz($req, $resp, $args)
+	{
+		$html = "<ul class='elements'>";
+		foreach($this->data as $unQuizz)
+		{
+			$html .= "
+				<li class='block'>
+					<h1>
+						".$unQuizz->nom."
+					</h1>
+					<p>
+						<b>Détails :</b>
+						<ul>
+							<li>
+								<b>Nombre de questions : </b>
+								".\quizzbox\model\question::where('id_quizz', $unQuizz->id)->count()."
+							</li>
+							<li>
+								<b>Difficulté évaluée : </b>
+								".$this->calculDifficulteQuizz($unQuizz)."
+							</li>
+						</ul>
+					</p>
+				</li>
+			";
+		}
+		$html = "</ul>";
+		
+		return $html;
+	}
 
+	
+	// -----------
+	
 	public function render($selector, $req, $resp, $args)
 	{
 		$html = $this->header($req, $resp, $args);
 		
 		switch($selector)
 		{
-			case "exemple":
-				$this->resp = $this->exemple($req, $resp, $args);
+			case "afficherCategories":
+				$this->resp = $this->afficherCategories($req, $resp, $args);
+				break;
+			case "afficherQuizz":
+				$this->resp = $this->afficherQuizz($req, $resp, $args);
 				break;
 		}
 		

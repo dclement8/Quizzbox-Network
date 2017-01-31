@@ -19,8 +19,28 @@ class quizzboxcontrol
     }
 
 
-    public function exemple(Request $req, Response $resp, $args)
+    /*public function exemple(Request $req, Response $resp, $args)
 	{
 		return (new \quizzbox\view\quizzboxview(null))->render('exemple', $req, $resp, $args);
+    }*/
+	
+	public function afficherCategories(Request $req, Response $resp, $args)
+	{
+		$categories = \quizzbox\model\categorie::orderBy('nom')->get();
+		
+		return (new \quizzbox\view\quizzboxview($categories))->render('afficherCategories', $req, $resp, $args);
+    }
+	
+	public function afficherQuizz(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		$quizz = \quizzbox\model\quizz::where('id_categorie', $id)->orderBy('nom')->get();
+		
+		return (new \quizzbox\view\quizzboxview($quizz))->render('afficherQuizz', $req, $resp, $args);
+    }
+	
+	public function accueil(Request $req, Response $resp, $args)
+	{
+		return (new \lbs\control\lbscontrol($this))->afficherCategories($req, $resp, $args);
     }
 }
