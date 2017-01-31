@@ -96,7 +96,7 @@ class quizzboxview
 			$cumulCoefficients = $cumulCoefficients + $uneQuestion->coefficient;
 		}
 		
-		$moyenneDifficulte = $cumulCoefficients / (\quizzbox\model\question::where('id_quizz', $unQuizz->id)->count());
+		$moyenneDifficulte = $cumulCoefficients / (\quizzbox\model\question::where('id_quizz', $quizz->id)->count());
 		
 		$difficulte = "Facile"; // moyenneDifficulte < 2
 		if($moyenneDifficulte >= 2)
