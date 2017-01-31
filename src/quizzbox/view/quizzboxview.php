@@ -133,7 +133,12 @@ class quizzboxview
 						".$uneCategorie->nom."
 					</h1>
 					<p>
+						<b>Description : </b>
 						".$uneCategorie->description."
+					</p>
+					<p>
+						<b>Nombre de quizz : </b>
+						".\quizzbox\model\quizz::where('id_categorie', $uneCategorie->id)->count()."
 					</p>
 					<a class='button' href='./categories/".$uneCategorie->id."'>
 						Consulter les quizz
