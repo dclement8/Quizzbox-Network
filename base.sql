@@ -25,6 +25,7 @@ CREATE TABLE joueur(
         id         int (11) Auto_increment  NOT NULL ,
         pseudo     Varchar (255) ,
         motdepasse Varchar (500) ,
+        email      Varchar (256) ,
         PRIMARY KEY (id ) ,
         UNIQUE (pseudo )
 )ENGINE=InnoDB;

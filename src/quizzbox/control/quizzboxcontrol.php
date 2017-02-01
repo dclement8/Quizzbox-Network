@@ -43,4 +43,75 @@ class quizzboxcontrol
 	{
 		//return (new \quizzbox\control\lbscontrol($this))->afficherCategories($req, $resp, $args);
     }
+
+    public function inscriptionForm(Request $req, Response $resp, $args) {
+        $args['pseudo'] = '';
+        $args['email'] = '';
+        $this->message = '';
+		return (new \quizzbox\view\quizzboxview($this))->render('inscriptionForm', $req, $resp, $args);
+    }
+
+    public function inscriptionTraitement(Request $req, Response $resp, $args) {
+        $args['pseudo'] = '';
+        $args['email'] = '';
+        $this->message = '';
+
+        if(isset($_POST['pseudo']))
+            $args['pseudo'] = filter_var($_POST['pseudo'], FILTER_SANITIZE_STRING);
+        if(isset($_POST['email']))
+            $args['email'] = filter_var($_POST['email'], FILTER_SANITIZE_STRING);
+        if(isset($_POST['mdp']))
+            $mdp = $_POST['mdp'];
+        if(isset($_POST['mdpconfirm']))
+            $mdpconfirm = $_POST['mdpconfirm'];
+
+        if(!empty($args['pseudo']) && !empty($args['email']) && !empty($mdp) && !empty($mdpconfirm)) {
+            if(strlen($args['pseudo']) > 2) {
+                if(strlen($args['pseudo']) < 256) {
+                    if(strlen($args['email']) > 5) {
+                        if(strlen($args['email']) < 256) {
+                            if(!filter_var($args['email'], FILTER_VALIDATE_EMAIL) === false) {
+                                if(\quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->count() == 0) {
+                                    if(\quizzbox\model\joueur::where('email', '=', $args['email'])->count() == 0) {
+                                        if($mdp == $mdpconfirm) {
+                                            if(strlen($mdp) > 5) {
+                                                /* Bien ! . */
+                                                $mdp = password_hash($mdp, PASSWORD_BCRYPT);
+                                                $user = new \quizzbox\model\joueur();
+                                                $user->pseudo = $args['pseudo'];
+                                                $user->motdepasse = $mdp;
+                                                $user->email = $args['email'];
+                                                $user->save();
+                                                return (new \quizzbox\view\quizzboxview($this))->render('inscriptionTraitement', $req, $resp, $args);
+                                            }
+                                            else
+                                                $this->message = 'Mot de passe trop court !';
+                                        }
+                                        else
+                                            $this->message = 'Les mots de passes sont différents !';
+                                    }
+                                    else
+                                        $this->message = 'Email déjà pris !';
+                                }
+                                else
+                                    $this->message = 'Pseudo déjà pris !';
+                            }
+                            else
+                                $this->message = 'E-mail invalide !';
+                        }
+                        else
+                            $this->message = 'E-mail trop long !';
+                    }
+                    else
+                        $this->message = 'E-mail trop court !';
+                }
+                else
+                    $this->message = 'Pseudo trop long !';
+            }
+            else
+                $this->message = 'Pseudo trop court !';
+        }
+        // S'il y a une/des erreurs, on affiche à nouveau le formulaire
+        return (new \quizzbox\view\quizzboxview($this))->render('inscriptionForm', $req, $resp, $args);
+    }
 }

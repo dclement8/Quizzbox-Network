@@ -43,5 +43,12 @@ $app->get('/categories/{id}',
 	}
 )->setName('afficherCategories');
 
+$app->get('/inscription', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->inscriptionForm($req, $resp, $args);
+})->setName('inscriptionForm');
+
+$app->post('/inscription', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->inscriptionTraitement($req, $resp, $args);
+})->setName('inscriptionTraitement');
 
 $app->run();

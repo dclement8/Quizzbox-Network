@@ -24,7 +24,7 @@ class quizzboxview
 		return 400;
 	}
 
-	
+
 	private function header($req, $resp, $args)
 	{
 		$html = "
@@ -44,7 +44,7 @@ class quizzboxview
 							Quizzbox
 						</h1>
 					</header>
-					
+
 		";
 		if(isset($_SESSION["message"]))
 		{
@@ -52,13 +52,13 @@ class quizzboxview
 			unset($_SESSION["message"]);
 		}
 		$html .= "
-					
+
 					<div id='content'>
 		";
-		
+
 		return $html;
 	}
-	
+
 	private function footer($req, $resp, $args)
 	{
 		$html = "
@@ -69,35 +69,35 @@ class quizzboxview
 				</body>
 			</html>
 		";
-		
+
 		return $html;
 	}
-	
-	
+
+
 	// -----------
-	
-	
+
+
 	/* private function exemple($req, $resp, $args)
 	{
 		$html = "";
 		return $html;
     }*/
-	
+
 	private function calculDifficulteQuizz($quizz)
 	{
 		// Un coefficient d'une question peut avoir comme valeur : 1, 2, 3, 4 ou 5
 		// Plus le coefficient est élevé, plus la question est difficile.
-		
+
 		$questions = \quizzbox\model\question::where('id_quizz', $quizz->id)->get();
-		
+
 		$cumulCoefficients = 0;
 		foreach($questions as $uneQuestion)
 		{
 			$cumulCoefficients = $cumulCoefficients + $uneQuestion->coefficient;
 		}
-		
+
 		$moyenneDifficulte = $cumulCoefficients / (\quizzbox\model\question::where('id_quizz', $quizz->id)->count());
-		
+
 		$difficulte = "Facile"; // moyenneDifficulte < 2
 		if($moyenneDifficulte >= 2)
 		{
@@ -117,11 +117,11 @@ class quizzboxview
 				$difficulte = "Moyen";
 			}
 		}
-		
+
 		return $difficulte;
 	}
-	
-	
+
+
 	private function afficherCategories($req, $resp, $args)
 	{
 		$html = "<ul class='elements'>";
@@ -147,10 +147,10 @@ class quizzboxview
 			";
 		}
 		$html = "</ul>";
-		
+
 		return $html;
 	}
-	
+
 	private function afficherQuizz($req, $resp, $args)
 	{
 		$html = "<ul class='elements'>";
@@ -178,29 +178,53 @@ class quizzboxview
 			";
 		}
 		$html = "</ul>";
-		
+
 		return $html;
 	}
 
-	
+	private function inscriptionForm($req, $resp, $args) {
+		$html = <<<EOT
+		<span>{$this->data->message}</span>
+		<form method="post" action="inscription">
+			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
+			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
+			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
+			<p><label for="mdpconfirm">Confirmation :</label> <input type="password" name="mdpconfirm" maxlength="255" required/></p>
+			<p><input type="submit" value="Inscription" /></p>
+		</form>
+EOT;
+		return $html;
+	}
+
+	private function inscriptionTraitement($req, $resp, $args) {
+		return 'Inscription effectuée avec succès !';
+	}
+
+
 	// -----------
-	
+
 	public function render($selector, $req, $resp, $args)
 	{
 		$html = $this->header($req, $resp, $args);
-		
+
 		switch($selector)
 		{
 			case "afficherCategories":
-				$this->resp = $this->afficherCategories($req, $resp, $args);
+				$html .= $this->afficherCategories($req, $resp, $args);
 				break;
 			case "afficherQuizz":
-				$this->resp = $this->afficherQuizz($req, $resp, $args);
+				$html .= $this->afficherQuizz($req, $resp, $args);
+				break;
+			case "inscriptionForm":
+				$html .= $this->inscriptionForm($req, $resp, $args);
+				break;
+			case "inscriptionTraitement":
+				$html .= $this->inscriptionTraitement($req, $resp, $args);
 				break;
 		}
-		
+
 		$html .= $this->footer($req, $resp, $args);
-		
+
 		$resp->getBody()->write($html);
 		return $resp;
 	}
