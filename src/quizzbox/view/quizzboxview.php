@@ -32,7 +32,7 @@ class quizzboxview
 				<a href='/'>Accueil</a>
 			</li>
 		";
-		
+
 		// Vérifier l'authentification pour afficher la connexion/inscription ou le profil
 		if(isset($_SESSION["login"]))
 		{
@@ -62,10 +62,10 @@ class quizzboxview
 				</li>
 			";
 		}
-		
+
 		return $html;
 	}
-	
+
 	private function header($req, $resp, $args)
 	{
 		$html = "
@@ -86,7 +86,7 @@ class quizzboxview
 						</h1>
 					</header>
 					<ul id='menu'>
-						".$this->menu()."
+						".$this->menu($req, $resp, $args)."
 					</ul>
 
 		";
@@ -190,7 +190,7 @@ class quizzboxview
 				</li>
 			";
 		}
-		$html = "</ul>";
+		$html .= "</ul>";
 
 		return $html;
 	}
@@ -221,7 +221,7 @@ class quizzboxview
 				</li>
 			";
 		}
-		$html = "</ul>";
+		$html .= "</ul>";
 
 		return $html;
 	}
