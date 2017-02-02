@@ -23,57 +23,6 @@ class quizzboxcontrol
 	{
 		return (new \quizzbox\view\quizzboxview(null))->render('exemple', $req, $resp, $args);
     }*/
-	
-	public function authentification(Request $req, Response $resp, callable $next)
-	{
-		// Middleware qui vérifie l'authentification
-		/*
-			Utilisation de la méthode "authentification" dans une route dans index.php :
-			->setName('nomDeVotreRoute')->add('authentification'); // A placer à la fin d'un $app->get par exemple
-		*/
-		
-		if(isset($_SESSION["login"]))
-		{
-			/* Bien ! . */
-			return $next($req, $resp);
-		}
-		else
-		{
-			// Non-authentifié : retour à l'accueil
-			$_SESSION["message"] = "Accès interdit : une authentification est requise pour accéder à la ressource demandée !";
-			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
-		}
-	}
-	
-	public function authentificationAdmin(Request $req, Response $resp, callable $next)
-	{
-		// Middleware qui vérifie l'authentification Administrateur
-		/*
-			Utilisation de la méthode "authentificationAdmin" dans une route dans index.php :
-			->setName('nomDeVotreRoute')->add('authentificationAdmin'); // A placer à la fin d'un $app->get par exemple
-		*/
-		
-		if(isset($_SESSION["login"]))
-		{
-			if($_SESSION["login"] == "admin")
-			{
-				/* Bien ! . */
-				return $next($req, $resp);
-			}
-			else
-			{
-				// Non-authentifié : retour à l'accueil
-				$_SESSION["message"] = "Accès interdit : vous n'avez pas l'autorisation nécessaire pour accéder à la ressource demandée !";
-				return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
-			}
-		}
-		else
-		{
-			// Non-authentifié : retour à l'accueil
-			$_SESSION["message"] = "Accès interdit : une authentification est requise pour accéder à la ressource demandée !";
-			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
-		}
-	}
 
 	public function afficherCategories(Request $req, Response $resp, $args)
 	{
@@ -163,5 +112,10 @@ class quizzboxcontrol
         }
         // S'il y a une/des erreurs, on affiche à nouveau le formulaire
         return (new \quizzbox\view\quizzboxview($this))->render('inscriptionForm', $req, $resp, $args);
+    }
+
+    public function creer(Request $req, Response $resp, $args)
+	{
+		return (new \quizzbox\control\quizzboxview($this))->render('creer', $req, $resp, $args);
     }
 }

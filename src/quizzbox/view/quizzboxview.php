@@ -244,6 +244,10 @@ EOT;
 		return 'Inscription effectuée avec succès !';
 	}
 
+	private function creer($req, $resp, $args) {
+		return;
+	}
+
 
 	// -----------
 
@@ -264,6 +268,9 @@ EOT;
 				break;
 			case "inscriptionTraitement":
 				$html .= $this->inscriptionTraitement($req, $resp, $args);
+				break;
+			case "creer":
+				$html .= $this->creer($req, $resp, $args);
 				break;
 		}
 

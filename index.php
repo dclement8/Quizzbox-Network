@@ -51,4 +51,8 @@ $app->post('/inscription', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->inscriptionTraitement($req, $resp, $args);
 })->setName('inscriptionTraitement');
 
+$app->get('/creer', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->creer($req, $resp, $args);
+})->setName('creer')->add(new quizzbox\utils\authentification());
+
 $app->run();
