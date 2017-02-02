@@ -23,14 +23,14 @@ class authentificationAdmin {
             {
                 // Non-authentifié : retour à l'accueil
                 $_SESSION["message"] = "Accès interdit : vous n'avez pas l'autorisation nécessaire pour accéder à la ressource demandée !";
-                return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+                return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, null);
             }
         }
         else
         {
             // Non-authentifié : retour à l'accueil
             $_SESSION["message"] = "Accès interdit : une authentification est requise pour accéder à la ressource demandée !";
-            return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+            return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, null);
         }
     }
 }
