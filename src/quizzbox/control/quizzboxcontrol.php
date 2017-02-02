@@ -23,6 +23,57 @@ class quizzboxcontrol
 	{
 		return (new \quizzbox\view\quizzboxview(null))->render('exemple', $req, $resp, $args);
     }*/
+	
+	public function authentification(Request $req, Response $resp, callable $next)
+	{
+		// Middleware qui vérifie l'authentification
+		/*
+			Utilisation de la méthode "authentification" dans une route dans index.php :
+			->setName('nomDeVotreRoute')->add('authentification'); // A placer à la fin d'un $app->get par exemple
+		*/
+		
+		if(isset($_SESSION["login"]))
+		{
+			/* Bien ! . */
+			return $next($req, $resp);
+		}
+		else
+		{
+			// Non-authentifié : retour à l'accueil
+			$_SESSION["message"] = "Accès interdit : une authentification est requise pour accéder à la ressource demandée !";
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
+	
+	public function authentificationAdmin(Request $req, Response $resp, callable $next)
+	{
+		// Middleware qui vérifie l'authentification Administrateur
+		/*
+			Utilisation de la méthode "authentificationAdmin" dans une route dans index.php :
+			->setName('nomDeVotreRoute')->add('authentificationAdmin'); // A placer à la fin d'un $app->get par exemple
+		*/
+		
+		if(isset($_SESSION["login"]))
+		{
+			if($_SESSION["login"] == "admin")
+			{
+				/* Bien ! . */
+				return $next($req, $resp);
+			}
+			else
+			{
+				// Non-authentifié : retour à l'accueil
+				$_SESSION["message"] = "Accès interdit : vous n'avez pas l'autorisation nécessaire pour accéder à la ressource demandée !";
+				return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+			}
+		}
+		else
+		{
+			// Non-authentifié : retour à l'accueil
+			$_SESSION["message"] = "Accès interdit : une authentification est requise pour accéder à la ressource demandée !";
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
 
 	public function afficherCategories(Request $req, Response $resp, $args)
 	{
@@ -41,7 +92,7 @@ class quizzboxcontrol
 
 	public function accueil(Request $req, Response $resp, $args)
 	{
-		//return (new \quizzbox\control\lbscontrol($this))->afficherCategories($req, $resp, $args);
+		return (new \quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
     }
 
     public function inscriptionForm(Request $req, Response $resp, $args) {
@@ -54,7 +105,6 @@ class quizzboxcontrol
     public function inscriptionTraitement(Request $req, Response $resp, $args) {
         $args['pseudo'] = '';
         $args['email'] = '';
-        $this->message = '';
 
         if(isset($_POST['pseudo']))
             $args['pseudo'] = filter_var($_POST['pseudo'], FILTER_SANITIZE_STRING);
@@ -85,31 +135,31 @@ class quizzboxcontrol
                                                 return (new \quizzbox\view\quizzboxview($this))->render('inscriptionTraitement', $req, $resp, $args);
                                             }
                                             else
-                                                $this->message = 'Mot de passe trop court !';
+                                                $_SESSION["message"] = 'Mot de passe trop court !';
                                         }
                                         else
-                                            $this->message = 'Les mots de passes sont différents !';
+                                            $_SESSION["message"] = 'Les mots de passes sont différents !';
                                     }
                                     else
-                                        $this->message = 'Email déjà pris !';
+                                        $_SESSION["message"] = 'Email déjà pris !';
                                 }
                                 else
-                                    $this->message = 'Pseudo déjà pris !';
+                                    $_SESSION["message"] = 'Pseudo déjà pris !';
                             }
                             else
-                                $this->message = 'E-mail invalide !';
+                                $_SESSION["message"] = 'E-mail invalide !';
                         }
                         else
-                            $this->message = 'E-mail trop long !';
+                            $_SESSION["message"] = 'E-mail trop long !';
                     }
                     else
-                        $this->message = 'E-mail trop court !';
+                        $_SESSION["message"] = 'E-mail trop court !';
                 }
                 else
-                    $this->message = 'Pseudo trop long !';
+                    $_SESSION["message"] = 'Pseudo trop long !';
             }
             else
-                $this->message = 'Pseudo trop court !';
+                $_SESSION["message"] = 'Pseudo trop court !';
         }
         // S'il y a une/des erreurs, on affiche à nouveau le formulaire
         return (new \quizzbox\view\quizzboxview($this))->render('inscriptionForm', $req, $resp, $args);

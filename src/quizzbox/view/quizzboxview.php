@@ -25,6 +25,47 @@ class quizzboxview
 	}
 
 
+	private function menu($req, $resp, $args)
+	{
+		$html = "
+			<li>
+				<a href='/'>Accueil</a>
+			</li>
+		";
+		
+		// Vérifier l'authentification pour afficher la connexion/inscription ou le profil
+		if(isset($_SESSION["login"]))
+		{
+			$html .= "
+				<li>
+					<a href='/profil'>Profil</a>
+				</li>
+			";
+			if($_SESSION["login"] == "admin")
+			{
+				// Authentification spéciale administrateur
+				$html .= "
+					<li>
+						<a href='/admin'>Administration</a>
+					</li>
+				";
+			}
+		}
+		else
+		{
+			$html .= "
+				<li>
+					<a href='/connexion'>Connexion</a>
+				</li>
+				<li>
+					<a href='/inscription'>Inscription</a>
+				</li>
+			";
+		}
+		
+		return $html;
+	}
+	
 	private function header($req, $resp, $args)
 	{
 		$html = "
@@ -44,6 +85,9 @@ class quizzboxview
 							Quizzbox
 						</h1>
 					</header>
+					<ul id='menu'>
+						".$this->menu()."
+					</ul>
 
 		";
 		if(isset($_SESSION["message"]))
