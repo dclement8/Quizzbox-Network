@@ -51,6 +51,14 @@ $app->post('/inscription', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->inscriptionTraitement($req, $resp, $args);
 })->setName('inscriptionTraitement');
 
+$app->get('/connexion', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->connexionForm($req, $resp, $args);
+})->setName('connexionForm');
+
+$app->post('/connexion', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->connexionTraitement($req, $resp, $args);
+})->setName('connexionTraitement');
+
 $app->get('/creer', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->creer($req, $resp, $args);
 })->setName('creer')->add(new quizzbox\utils\authentification());

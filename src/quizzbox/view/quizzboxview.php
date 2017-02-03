@@ -209,7 +209,7 @@ class quizzboxview
 								".$this->calculDifficulteQuizz($unQuizz)."
 							</li>
 							";
-			
+
 			if(isset($_SESSION["login"]))
 			{
 				if($_SESSION["login"] == "admin")
@@ -223,7 +223,7 @@ class quizzboxview
 					";
 				}
 			}
-							
+
 			$html .= "
 						</ul>
 					</p>
@@ -235,9 +235,23 @@ class quizzboxview
 		return $html;
 	}
 
+	private function connexionForm($req, $resp, $args) {
+		$html = <<<EOT
+		<form method="post" action="connexion">
+			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
+			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
+			<p><input type="submit" value="Connexion" /></p>
+		</form>
+EOT;
+		return $html;
+	}
+
+	private function connexionTraitement($req, $resp, $args) {
+		return 'Vous êtes connecté ! Redirection...';
+	}
+
 	private function inscriptionForm($req, $resp, $args) {
 		$html = <<<EOT
-		<span>{$this->data->message}</span>
 		<form method="post" action="inscription">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
@@ -271,6 +285,12 @@ EOT;
 				break;
 			case "afficherQuizz":
 				$html .= $this->afficherQuizz($req, $resp, $args);
+				break;
+			case "connexionForm":
+				$html .= $this->connexionForm($req, $resp, $args);
+				break;
+			case "connexionTraitement":
+				$html .= $this->connexionTraitement($req, $resp, $args);
 				break;
 			case "inscriptionForm":
 				$html .= $this->inscriptionForm($req, $resp, $args);

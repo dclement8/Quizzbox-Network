@@ -44,10 +44,38 @@ class quizzboxcontrol
 		return (new \quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
     }
 
+    public function connexionForm(Request $req, Response $resp, $args) {
+        $args['pseudo'] = '';
+		return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+    }
+
+    public function connexionTraitement(Request $req, Response $resp, $args) {
+        $args['pseudo'] = '';
+
+        if(isset($_POST['pseudo']))
+            $args['pseudo'] = filter_var($_POST['pseudo'], FILTER_SANITIZE_STRING);
+        if(isset($_POST['mdp']))
+            $mdp = $_POST['mdp'];
+
+        if(!empty($args['pseudo']) && !empty($mdp)) {
+            $joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
+            if($joueur !== null && $joueur !== false) {
+                if(password_verify($mdp, $joueur->motdepasse)) {
+                    $_SESSION["login"] = $joueur->pseudo;
+                    return (new \quizzbox\view\quizzboxview($this))->render('connexionTraitement', $req, $resp, $args);
+                }
+                else
+                    $_SESSION["message"] = 'Mot de passe incorrect !';
+            }
+            else
+                $_SESSION["message"] = 'Joueur inexistant !';
+        }
+        return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+    }
+
     public function inscriptionForm(Request $req, Response $resp, $args) {
         $args['pseudo'] = '';
         $args['email'] = '';
-        $this->message = '';
 		return (new \quizzbox\view\quizzboxview($this))->render('inscriptionForm', $req, $resp, $args);
     }
 
@@ -118,7 +146,7 @@ class quizzboxcontrol
 	{
 		return (new \quizzbox\view\quizzboxview($this))->render('creer', $req, $resp, $args);
     }
-	
+
 	public function supprimerQuizz(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
@@ -130,7 +158,7 @@ class quizzboxcontrol
 			\quizzbox\model\quizz::destroy($id);
 		}
 		$_SESSION["message"] = 'Quizz supprimé';
-		
+
 		return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
 	}
 }
