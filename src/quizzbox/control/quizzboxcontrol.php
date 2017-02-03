@@ -116,6 +116,21 @@ class quizzboxcontrol
 
     public function creer(Request $req, Response $resp, $args)
 	{
-		return (new \quizzbox\control\quizzboxview($this))->render('creer', $req, $resp, $args);
+		return (new \quizzbox\view\quizzboxview($this))->render('creer', $req, $resp, $args);
     }
+	
+	public function supprimerQuizz(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		if(\quizzbox\model\quizz::where('id', $id)->get()->toJson() != "[]")
+		{
+			\quizzbox\model\reponse::where('id_quizz', $id)->delete();
+			\quizzbox\model\question::where('id_quizz', $id)->delete();
+			\quizzbox\model\quizz::find($id)->scores()->detach();
+			\quizzbox\model\quizz::destroy($id);
+		}
+		$_SESSION["message"] = 'Quizz supprimé';
+		
+		return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
+	}
 }

@@ -55,4 +55,10 @@ $app->get('/creer', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->creer($req, $resp, $args);
 })->setName('creer')->add(new quizzbox\utils\authentification());
 
+$app->post('/quizz/{id}/supprimer', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->supprimerQuizz($req, $resp, $args);
+})->setName('supprimerQuizz')->add(new quizzbox\utils\authentificationAdmin());
+
+
+
 $app->run();

@@ -41,15 +41,6 @@ class quizzboxview
 					<a href='/profil'>Profil</a>
 				</li>
 			";
-			if($_SESSION["login"] == "admin")
-			{
-				// Authentification spéciale administrateur
-				$html .= "
-					<li>
-						<a href='/admin'>Administration</a>
-					</li>
-				";
-			}
 		}
 		else
 		{
@@ -75,8 +66,9 @@ class quizzboxview
 					<meta charset='UTF-8'>
 					<meta name='viewport' content='width=device-width, initial-scale=1'>
 					<title>Quizzbox</title>
-					<script src='jquery.min.js'></script>
-					<script src='script.js'></script>
+					<script src='js/jquery.min.js'></script>
+					<script src='js/script.js'></script>
+					<script src='js/coche.js'></script>
 					<link rel='stylesheet' type='text/css' href='css/style.css'/>
 				</head>
 				<body>
@@ -216,6 +208,23 @@ class quizzboxview
 								<b>Difficulté évaluée : </b>
 								".$this->calculDifficulteQuizz($unQuizz)."
 							</li>
+							";
+			
+			if(isset($_SESSION["login"]))
+			{
+				if($_SESSION["login"] == "admin")
+				{
+					$html .= "
+							<li>
+								<form method='post' action='./quizz/".$unQuizz->id."/supprimer/'>
+									<button type='submit'>Supprimer le quizz</button>
+								</form>
+							</li>
+					";
+				}
+			}
+							
+			$html .= "
 						</ul>
 					</p>
 				</li>
