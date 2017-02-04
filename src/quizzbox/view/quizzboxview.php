@@ -132,7 +132,11 @@ class quizzboxview
 			$cumulCoefficients = $cumulCoefficients + $uneQuestion->coefficient;
 		}
 
-		$moyenneDifficulte = $cumulCoefficients / (\quizzbox\model\question::where('id_quizz', $quizz->id)->count());
+		$moyenneDifficulte = 0;
+		if(\quizzbox\model\question::where('id_quizz', $quizz->id)->count() != 0)
+		{
+			$moyenneDifficulte = $cumulCoefficients / (\quizzbox\model\question::where('id_quizz', $quizz->id)->count());
+		}
 
 		$difficulte = "Facile"; // moyenneDifficulte < 2
 		if($moyenneDifficulte >= 2)
@@ -234,6 +238,137 @@ class quizzboxview
 
 		return $html;
 	}
+	
+	private function afficherProfil($req, $resp, $args)
+	{
+		$scores = \quizzbox\model\joueur::find($this->data->id)->scores()->orderBy('dateHeure', 'DESC')->get();
+		
+		// Récupérer le nombre de quizz joués par le joueur
+		$nbQuizz = \quizzbox\model\joueur::find($this->data->id)->scores()->count();
+		
+		// Calcul du niveau moyen du joueur
+		/*
+			Le joueur doit avoir joué à au moins 5 quizz pour que l'on puisse déterminer son niveau.
+		
+			Méthode opératoire :
+				- Comparer la somme des coefficients des quizz joués à la somme des scores du joueur
+				- Si le cumul des scores du joueur est < 1/4 de la somme des coefficients des quizz joués alors niveau = Faible ; < 2/4 = Moyen ; < 3/4 = Bon ; <= 4/4 = Champion ; au delà c'est un tricheur X)
+		*/
+		$niveauJoueur = "Indéterminé";
+		if($nbQuizz >= 5)
+		{
+			$cumulCoefficientsQuizzJoues = 0; // Etant le score maximal qu'il est possible d'obtenir
+			foreach ($scores as $unScore)
+			{
+				$questions = \quizzbox\model\question::where('id_quizz', $unScore->pivot->id_quizz)->get();
+				
+				foreach($questions as $uneQuestion)
+				{
+					$cumulCoefficientsQuizzJoues += $uneQuestion->coefficient;
+				}
+			}
+			
+			$cumulScoreJoueur = 0;
+			foreach ($scores as $unScore)
+			{
+				$cumulScoreJoueur += $unScore->pivot->score;
+			}
+			
+			$niv = $cumulScoreJoueur / $cumulCoefficientsQuizzJoues;
+			if($niv < (1/4))
+			{
+				$niveauJoueur = "Faible";
+			}
+			else
+			{
+				if($niv < (2/4))
+				{
+					$niveauJoueur = "Moyen";
+				}
+				else
+				{
+					if($niv < (3/4))
+					{
+						$niveauJoueur = "Bon";
+					}
+					else
+					{
+						if($niv <= 1)
+						{
+							$niveauJoueur = "Champion";
+						}
+						else
+						{
+							/* Faut aussi penser à tout X) ! . */
+							$niveauJoueur = "Tricheur";
+						}
+					}
+				}
+			}
+		}
+		
+		// Déterminer la catégorie de quizz la plus jouée par le joueur
+		$categories = array();
+		foreach ($scores as $unScore)
+		{
+			$categories[] = \quizzbox\model\quizz::find($unScore->pivot->id_quizz)->first()->id_categorie;
+		}
+		$nbCategories = array_count_values($categories);
+		$leMax = 0;
+		$idCategoriePlusJouee = 0;
+		foreach ($nbCategories as $uneCategorie => $nbFoisJouee)
+		{
+			if($leMax < $nbFoisJouee)
+			{
+				$leMax = $nbFoisJouee;
+				$idCategoriePlusJouee = $uneCategorie;
+			}
+		}
+		$categoriePredilection = \quizzbox\model\categorie::find($idCategoriePlusJouee)->first();
+		
+		
+		
+		$html = "
+			<ul class='profil'>
+				<li>
+					<b>".$this->data->pseudo."</b>
+				</li>
+				<li>
+					<b>Inscrit le : </b>".$this->data->dateInscription."
+				</li>
+				<li>
+					".$nbQuizz."<b> quizz joué(s)</b>
+				</li>
+				<li>
+					<b>Niveau moyen du joueur : </b>".$niveauJoueur."
+				</li>
+				<li>
+					<b>Dernier quizz joué : </b>".\quizzbox\model\quizz::find($scores[0]->pivot->id_quizz)->first()->nom.", <b>le :</b> ".$scores[0]->pivot->dateHeure."
+				</li>
+				<li>
+					<b>Domaine de prédilection : </b><a href='../categories/".$categoriePredilection->id."'>".$categoriePredilection->nom."</a>
+				</li>";
+			
+		// Supprimer l'utilisateur
+		if(isset($_SESSION["login"]))
+		{
+			if($_SESSION["login"] == "admin")
+			{
+				$html .= "
+				<li>
+					<form method='post' action='./profil/".$this->data->id."/supprimer/'>
+						<button type='submit'>Supprimer le joueur</button>
+					</form>
+				</li>";
+			}
+		}
+				
+		$html .= "
+			</ul>
+		";
+		
+		return $html;
+	}
 
 	private function connexionForm($req, $resp, $args) {
 		$html = <<<EOT
@@ -278,7 +413,10 @@ EOT;
 	{
 		$html = $this->header($req, $resp, $args);
 
-		switch($selector)
+		// Sélectionne automatiquement le sélecteur.
+		$html .= $this->$selector($req, $resp, $args);
+		
+		/*switch($selector)
 		{
 			case "afficherCategories":
 				$html .= $this->afficherCategories($req, $resp, $args);
@@ -301,7 +439,7 @@ EOT;
 			case "creer":
 				$html .= $this->creer($req, $resp, $args);
 				break;
-		}
+		}*/
 
 		$html .= $this->footer($req, $resp, $args);
 

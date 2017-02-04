@@ -19,6 +19,6 @@ class quizz extends \Illuminate\Database\Eloquent\Model
 	// scores
 	public function scores()
 	{
-		return $this->belongsToMany("\quizzbox\model\joueur","scores","id_quizz","id_joueur");
+		return $this->belongsToMany("\quizzbox\model\joueur","scores","id_quizz","id_joueur")->withPivot("score", "dateHeure", "typeJeu");
 	}
 }

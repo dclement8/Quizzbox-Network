@@ -161,4 +161,33 @@ class quizzboxcontrol
 
 		return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
 	}
+	
+	public function supprimerJoueur(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		if(\quizzbox\model\joueur::where('id', $id)->get()->toJson() != "[]")
+		{
+			\quizzbox\model\joueur::find($id)->scores()->detach();
+			\quizzbox\model\joueur::destroy($id);
+		}
+		$_SESSION["message"] = 'Joueur supprimé';
+
+		return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+	}
+	
+	public function afficherProfil(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		if(\quizzbox\model\joueur::where('id', $id)->get()->toJson() != "[]")
+		{
+			$joueur = \quizzbox\model\joueur::find($id);
+			return (new \quizzbox\view\quizzboxview($joueur))->render('afficherProfil', $req, $resp, $args);
+		}
+		else
+		{
+			/* Oups ! . */
+			$_SESSION["message"] = 'Ce joueur n\'existe pas !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
 }

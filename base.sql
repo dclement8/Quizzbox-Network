@@ -26,6 +26,7 @@ CREATE TABLE joueur(
         pseudo     Varchar (255) ,
         motdepasse Varchar (500) ,
         email      Varchar (256) ,
+		dateInscription Datetime ,
         PRIMARY KEY (id ) ,
         UNIQUE (pseudo )
 )ENGINE=InnoDB;
