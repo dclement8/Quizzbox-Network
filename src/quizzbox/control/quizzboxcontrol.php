@@ -46,7 +46,21 @@ class quizzboxcontrol
 
     public function connexionForm(Request $req, Response $resp, $args) {
         $args['pseudo'] = '';
-		return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+		if(isset($_SESSION["login"]))
+		{
+			// Déconnexion et destruction de tous les éléments de session
+			foreach($_SESSION as $elementDeSession)
+			{
+				unset($elementDeSession);
+			}
+			
+			$_SESSION["message"] = "Vous êtes à présent déconnecté !";
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+		else
+		{
+			return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+		}
     }
 
     public function connexionTraitement(Request $req, Response $resp, $args) {

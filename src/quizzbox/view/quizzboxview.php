@@ -7,6 +7,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 class quizzboxview
 {
 	protected $data = null ;
+	protected $baseURL = null;
 
     public function __construct($data)
 	{
@@ -29,7 +30,7 @@ class quizzboxview
 	{
 		$html = "
 			<li>
-				<a href='/'>Accueil</a>
+				<a href='".$this->baseURL."'>Accueil</a>
 			</li>
 		";
 
@@ -38,7 +39,10 @@ class quizzboxview
 		{
 			$html .= "
 				<li>
-					<a href='/profil'>Profil</a>
+					<a href='".$this->baseURL."/profil'>Profil</a>
+				</li>
+				<li>
+					<a href='".$this->baseURL."/connexion'>Déconnexion</a>
 				</li>
 			";
 		}
@@ -46,10 +50,10 @@ class quizzboxview
 		{
 			$html .= "
 				<li>
-					<a href='/connexion'>Connexion</a>
+					<a href='".$this->baseURL."/connexion'>Connexion</a>
 				</li>
 				<li>
-					<a href='/inscription'>Inscription</a>
+					<a href='".$this->baseURL."/inscription'>Inscription</a>
 				</li>
 			";
 		}
@@ -66,10 +70,10 @@ class quizzboxview
 					<meta charset='UTF-8'>
 					<meta name='viewport' content='width=device-width, initial-scale=1'>
 					<title>Quizzbox</title>
-					<script src='js/jquery.min.js'></script>
-					<script src='js/script.js'></script>
-					<script src='js/coche.js'></script>
-					<link rel='stylesheet' type='text/css' href='css/style.css'/>
+					<script src='".$this->baseURL."/js/jquery.min.js'></script>
+					<script src='".$this->baseURL."/js/script.js'></script>
+					<script src='".$this->baseURL."/js/coche.js'></script>
+					<link rel='stylesheet' type='text/css' href='".$this->baseURL."/css/style.css'/>
 				</head>
 				<body>
 					<header>
@@ -180,7 +184,7 @@ class quizzboxview
 						<b>Nombre de quizz : </b>
 						".\quizzbox\model\quizz::where('id_categorie', $uneCategorie->id)->count()."
 					</p>
-					<a class='button' href='./categories/".$uneCategorie->id."'>
+					<a class='button' href='".$this->baseURL."/categories/".$uneCategorie->id."'>
 						Consulter les quizz
 					</a>
 				</li>
@@ -220,7 +224,7 @@ class quizzboxview
 				{
 					$html .= "
 							<li>
-								<form method='post' action='./quizz/".$unQuizz->id."/supprimer/'>
+								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer/'>
 									<button type='submit'>Supprimer le quizz</button>
 								</form>
 							</li>
@@ -389,7 +393,7 @@ class quizzboxview
 					<b>Dernier quizz joué : </b>".\quizzbox\model\quizz::find($scores[0]->pivot->id_quizz)->first()->nom.", <b>le :</b> ".$scores[0]->pivot->dateHeure."
 				</li>
 				<li>
-					<b>Domaine de prédilection : </b><a href='../categories/".$categoriePredilection->id."'>".$categoriePredilection->nom."</a>
+					<b>Domaine de prédilection : </b><a href='".$this->baseURL."/categories/".$categoriePredilection->id."'>".$categoriePredilection->nom."</a>
 				</li>";
 			
 		// Supprimer l'utilisateur
@@ -399,7 +403,7 @@ class quizzboxview
 			{
 				$html .= "
 				<li>
-					<form method='post' action='./profil/".$this->data->id."/supprimer/'>
+					<form method='post' action='".$this->baseURL."/profil/".$this->data->id."/supprimer/'>
 						<button type='submit'>Supprimer le joueur</button>
 					</form>
 				</li>";
@@ -415,7 +419,7 @@ class quizzboxview
 
 	private function connexionForm($req, $resp, $args) {
 		$html = <<<EOT
-		<form method="post" action="connexion">
+	<form method="post" action="{$this->baseURL}/connexion">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
 			<p><input type="submit" value="Connexion" /></p>
@@ -430,7 +434,7 @@ EOT;
 
 	private function inscriptionForm($req, $resp, $args) {
 		$html = <<<EOT
-		<form method="post" action="inscription">
+		<form method="post" action="{$this->baseURL}/inscription">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
@@ -454,6 +458,8 @@ EOT;
 
 	public function render($selector, $req, $resp, $args)
 	{
+		$this->baseURL = $req->getUri()->getBasePath();
+		
 		$html = $this->header($req, $resp, $args);
 
 		// Sélectionne automatiquement le sélecteur.
