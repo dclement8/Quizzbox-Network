@@ -61,7 +61,7 @@ class quizzboxcontrol
             $joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
             if($joueur !== null && $joueur !== false) {
                 if(password_verify($mdp, $joueur->motdepasse)) {
-                    $_SESSION["login"] = $joueur->pseudo;
+                    $_SESSION["login"] = $joueur->id;
                     return (new \quizzbox\view\quizzboxview($this))->render('connexionTraitement', $req, $resp, $args);
                 }
                 else

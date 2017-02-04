@@ -231,8 +231,48 @@ class quizzboxview
 			$html .= "
 						</ul>
 					</p>
+					<h2>Classement des 10 meilleurs joueurs :</h2>
+					<table class='classement'>
+						<tr>
+							<th>Position</td>
+							<th>Joueur</td>
+							<th>Score</td>
+						</tr>
+						";
+						
+			$scores = \quizzbox\model\quizz::find($unQuizz->id)->scores()->orderBy('score', 'DESC')->take(10)->get();
+			$position = 1;
+			foreach($scores as $unScore)
+			{
+				$html .= "
+					<tr>
+						<td>".$position."</td>
+						<td>".\quizzbox\model\joueur::find($unScore->pivot->id_joueur)->first()->pseudo."</td>
+						<td>".$unScore->pivot->score."</td>
+					</tr>
+				";
+				$position++;
+			}
+			
+						
+			$html .= "
+					</table>
+			";
+			
+			if(isset($_SESSION["login"]))
+			{
+				$scores = \quizzbox\model\joueur::where("id", $_SESSION["login"])->where("id_quizz", $unQuizz->id)->scores()->first();
+				
+				$html .= "<p>
+					<b>Votre score sur ce quizz est de : </b>".$scores->pivot->score."
+				</p>";
+			}
+			
+			$html .= "
 				</li>
 			";
+			
+			
 		}
 		$html .= "</ul>";
 
