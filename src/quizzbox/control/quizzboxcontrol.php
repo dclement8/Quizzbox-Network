@@ -207,12 +207,12 @@ class quizzboxcontrol
 	
 	public function getQuizz(Request $req, Response $resp, $args)
 	{
-		// Retourne une représentation JSON du Quizz passé en paramètre.
+		// Retourne une représentation JSON du Quizz passé en paramètre (via le token).
 		
-		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
-		if(\quizzbox\model\quizz::where('id', $id)->get()->toJson() != "[]")
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT); // ID = Token
+		if(\quizzbox\model\quizz::where('tokenWeb', $id)->get()->toJson() != "[]")
 		{
-			$quizz = \quizzbox\model\quizz::find($id);
+			$quizz = \quizzbox\model\quizz::where('tokenWeb', $id)->get();
 			$questions = \quizzbox\model\question::where('id_quizz', $id)->get();
 			
 			$jsonQuestion = '[ ';
@@ -281,7 +281,7 @@ class quizzboxcontrol
 			
 			$dir = "upload/";
 			
-			$nomFichier = 'quizzbox_'.\quizzbox\model\quizz::find($id)->first()->token.'_'.time().'.quizz';
+			$nomFichier = 'quizzbox_'.\quizzbox\model\quizz::where('tokenWeb', $id)->first()->tokenWeb.'_'.time().'.quizz';
 			$csv = new \SplFileObject($dir.$nomFichier, 'w');
 			
 			// Encode le JSON

@@ -217,7 +217,7 @@ class quizzboxview
 								".$this->calculDifficulteQuizz($unQuizz)."
 							</li>
 							<li>
-								<form method='get' action='".$this->baseURL."/quizz/".$unQuizz->id."/download'>
+								<form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
 									<button type='submit'>Télécharger le quizz</button>
 								</form>
 							</li>";
