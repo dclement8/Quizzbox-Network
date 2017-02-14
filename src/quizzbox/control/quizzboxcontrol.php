@@ -156,7 +156,8 @@ class quizzboxcontrol
 
     public function creer(Request $req, Response $resp, $args)
 	{
-		return (new \quizzbox\view\quizzboxview($this))->render('creer', $req, $resp, $args);
+        $data = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
+		return (new \quizzbox\view\quizzboxview($data))->render('creer', $req, $resp, $args);
     }
 
 	public function supprimerQuizz(Request $req, Response $resp, $args)

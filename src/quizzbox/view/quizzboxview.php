@@ -70,9 +70,6 @@ class quizzboxview
 					<meta charset='UTF-8'>
 					<meta name='viewport' content='width=device-width, initial-scale=1'>
 					<title>Quizzbox</title>
-					<script src='".$this->baseURL."/js/jquery.min.js'></script>
-					<script src='".$this->baseURL."/js/script.js'></script>
-					<script src='".$this->baseURL."/js/coche.js'></script>
 					<link rel='stylesheet' type='text/css' href='".$this->baseURL."/css/style.css'/>
 				</head>
 				<body>
@@ -106,6 +103,9 @@ class quizzboxview
 					<footer>
 						Quizzbox
 					</footer>
+					<script src='".$this->baseURL."/js/jquery.min.js'></script>
+					<script src='".$this->baseURL."/js/main.js'></script>
+					<script src='".$this->baseURL."/js/coche.js'></script>
 				</body>
 			</html>
 		";
@@ -247,7 +247,7 @@ class quizzboxview
 							<th>Score</td>
 						</tr>
 						";
-						
+
 			$scores = \quizzbox\model\quizz::find($unQuizz->id)->scores()->orderBy('score', 'DESC')->take(10)->get();
 			$position = 1;
 			foreach($scores as $unScore)
@@ -261,46 +261,46 @@ class quizzboxview
 				";
 				$position++;
 			}
-			
-						
+
+
 			$html .= "
 					</table>
 			";
-			
+
 			if(isset($_SESSION["login"]))
 			{
 				if(\quizzbox\model\joueur::where("id", $_SESSION["login"])->where("id_quizz", $unQuizz->id)->scores()->count() > 0)
 				{
 					$scores = \quizzbox\model\joueur::where("id", $_SESSION["login"])->where("id_quizz", $unQuizz->id)->scores()->first();
-					
+
 					$html .= "<p>
 						<b>Votre score sur ce quizz est de : </b>".$scores->pivot->score."
 					</p>";
 				}
 			}
-			
+
 			$html .= "
 				</li>
 			";
-			
-			
+
+
 		}
 		$html .= "</ul>";
 
 		return $html;
 	}
-	
+
 	private function afficherProfil($req, $resp, $args)
 	{
 		$scores = \quizzbox\model\joueur::find($this->data->id)->scores()->orderBy('dateHeure', 'DESC')->get();
-		
+
 		// Récupérer le nombre de quizz joués par le joueur
 		$nbQuizz = \quizzbox\model\joueur::find($this->data->id)->scores()->count();
-		
+
 		// Calcul du niveau moyen du joueur
 		/*
 			Le joueur doit avoir joué à au moins 5 quizz pour que l'on puisse déterminer son niveau.
-		
+
 			Méthode opératoire :
 				- Comparer la somme des coefficients des quizz joués à la somme des scores du joueur
 				- Si le cumul des scores du joueur est < 1/4 de la somme des coefficients des quizz joués alors niveau = Faible ; < 2/4 = Moyen ; < 3/4 = Bon ; <= 4/4 = Champion ; au delà c'est un tricheur X)
@@ -312,19 +312,19 @@ class quizzboxview
 			foreach ($scores as $unScore)
 			{
 				$questions = \quizzbox\model\question::where('id_quizz', $unScore->pivot->id_quizz)->get();
-				
+
 				foreach($questions as $uneQuestion)
 				{
 					$cumulCoefficientsQuizzJoues += $uneQuestion->coefficient;
 				}
 			}
-			
+
 			$cumulScoreJoueur = 0;
 			foreach ($scores as $unScore)
 			{
 				$cumulScoreJoueur += $unScore->pivot->score;
 			}
-			
+
 			$niv = $cumulScoreJoueur / $cumulCoefficientsQuizzJoues;
 			if($niv < (1/4))
 			{
@@ -357,7 +357,7 @@ class quizzboxview
 				}
 			}
 		}
-		
+
 		// Déterminer la catégorie de quizz la plus jouée par le joueur
 		$categories = array();
 		foreach ($scores as $unScore)
@@ -376,9 +376,9 @@ class quizzboxview
 			}
 		}
 		$categoriePredilection = \quizzbox\model\categorie::find($idCategoriePlusJouee)->first();
-		
-		
-		
+
+
+
 		$html = "
 			<ul class='profil'>
 				<li>
@@ -399,7 +399,7 @@ class quizzboxview
 				<li>
 					<b>Domaine de prédilection : </b><a href='".$this->baseURL."/categories/".$categoriePredilection->id."'>".$categoriePredilection->nom."</a>
 				</li>";
-			
+
 		// Supprimer l'utilisateur
 		if(isset($_SESSION["login"]))
 		{
@@ -413,11 +413,11 @@ class quizzboxview
 				</li>";
 			}
 		}
-				
+
 		$html .= "
 			</ul>
 		";
-		
+
 		return $html;
 	}
 
@@ -454,13 +454,35 @@ EOT;
 	}
 
 	private function creer($req, $resp, $args) {
-		return;
+		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
+		$html = <<<EOT
+		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
+			<input type="hidden" name="json" id="json" />
+			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" maxlength="255" value="" required/></p>
+			<p><label for="categorie">Catégorie :</label>
+			<select name="categorie">
+EOT;
+		foreach($this->data as $categorie) {
+			$html .= '<option>'.$categorie->nom.'</option>';
+		}
+		$html .= <<<EOT
+			</select></p>
+			<hr />
+			<h3>Questions</h3>
+
+			<div id="questions">
+			</div>
+
+			<p><input type="button" value="Ajouter une question" onclick="creer.ajouterQuestion()" /> <input type="button" value="Créer" onclick="creer.envoyer()" /></p>
+		</form>
+EOT;
+		return $html;
 	}
-	
+
 	private function getQuizzJSON($req, $resp, $args)
 	{
 		$json = "";
-		
+
 		if(is_array($this->data))
 		{
 			$json = json_encode($this->data);
@@ -471,7 +493,7 @@ EOT;
 			$json = $this->data;
 			$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
 		}
-		
+
 		$resp->getBody()->write($json);
 		return $resp;
 	}
@@ -482,12 +504,12 @@ EOT;
 	public function render($selector, $req, $resp, $args)
 	{
 		$this->baseURL = $req->getUri()->getBasePath();
-		
+
 		$html = $this->header($req, $resp, $args);
 
 		// Sélectionne automatiquement le sélecteur.
 		$html .= $this->$selector($req, $resp, $args);
-		
+
 		/*switch($selector)
 		{
 			case "afficherCategories":
