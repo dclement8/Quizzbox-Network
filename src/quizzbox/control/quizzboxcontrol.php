@@ -49,11 +49,9 @@ class quizzboxcontrol
 		if(isset($_SESSION["login"]))
 		{
 			// Déconnexion et destruction de tous les éléments de session
-			foreach($_SESSION as $elementDeSession)
-			{
-				unset($elementDeSession);
-			}
-			
+			unset($_SESSION);
+            session_destroy();
+
 			$_SESSION["message"] = "Vous êtes à présent déconnecté !";
 			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 		}
@@ -175,7 +173,7 @@ class quizzboxcontrol
 
 		return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
 	}
-	
+
 	public function supprimerJoueur(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
@@ -188,7 +186,7 @@ class quizzboxcontrol
 
 		return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 	}
-	
+
 	public function afficherProfil(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
@@ -204,7 +202,7 @@ class quizzboxcontrol
 			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 		}
 	}
-	
+
 	public function getQuizz(Request $req, Response $resp, $args)
 	{
 		// Retourne une représentation JSON du Quizz passé en paramètre (via le token).
@@ -214,12 +212,12 @@ class quizzboxcontrol
 		{
 			$quizz = \quizzbox\model\quizz::where('tokenWeb', $id)->get();
 			$questions = \quizzbox\model\question::where('id_quizz', $id)->get();
-			
+
 			$jsonQuestion = '[ ';
 			foreach($questions as $uneQuestion)
 			{
 				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "ennonce" : "'.str_replace("'", "\'", $uneQuestion->ennonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
-				
+
 				$reponses = \quizzbox\model\question::where('id_quizz', $id)->where('id_question', $uneQuestion->id)->get();
 				$i = 1;
 				foreach($reponses as $uneReponse)
@@ -234,11 +232,11 @@ class quizzboxcontrol
 				$jsonQuestion .= ' ] }';
 			}
 			$jsonQuestion .= ' ]';
-			
+
 			$jsonQuizz = $quizz->toJson();
 			$jsonQuizz = substr($jsonQuizz, 0, -1);
 			$jsonQuizz = substr($jsonQuizz, 1);
-			
+
 			$json = '{ "quizz" : { '.$jsonQuizz.' } , "questions" : '.$jsonQuestion.' }';
 			return $json;
 		}
@@ -248,11 +246,11 @@ class quizzboxcontrol
 			return null;
 		}
 	}
-	
+
 	public function getQuizzJSON(Request $req, Response $resp, $args)
 	{
 		$json = (new \quizzbox\control\quizzboxcontrol($this))->getQuizz($req, $resp, $args);
-		
+
 		if($json == null)
 		{
 			$arr = array('error' => 'quizz introuvable !');
@@ -264,12 +262,12 @@ class quizzboxcontrol
 			return (new \lbs\view\lbsview($json))->render('getQuizzJSON', $req, $resp, $args);
 		}
 	}
-	
+
 	public function telechargerQuizz(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
 		$json = (new \quizzbox\control\quizzboxcontrol($this))->getQuizz($req, $resp, $args);
-		
+
 		if($json == null)
 		{
 			$_SESSION["message"] = 'Le quizz n\'existe pas !';
@@ -278,27 +276,27 @@ class quizzboxcontrol
 		else
 		{
 			// Téléchargement du fichier Quizz
-			
+
 			$dir = "upload/";
 			
 			$nomFichier = 'quizzbox_'.\quizzbox\model\quizz::where('tokenWeb', $id)->first()->tokenWeb.'_'.time().'.quizz';
 			$csv = new \SplFileObject($dir.$nomFichier, 'w');
-			
+
 			// Encode le JSON
 			$csv->fwrite(base64_encode($json));
-			
+
 			header("Cache-Control: no-cache, must-revalidate");
 			header("Cache-Control: post-check=0,pre-check=0");
 			header("Cache-Control: max-age=0");
 			header("Pragma: no-cache");
 			header("Expires: 0");
-			
+
 			header("Content-Type: application/force-download");
 			header('Content-Disposition: attachment; filename="'.$nomFichier.'"');
-			
+
 			$size = filesize($dir.$nomFichier);
 			header("Content-Length: ".$size);
-			
+
 			readfile($dir.$nomFichier);
 		}
 	}
