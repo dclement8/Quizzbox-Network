@@ -237,7 +237,7 @@ class quizzboxcontrol
 			$jsonQuizz = substr($jsonQuizz, 0, -1);
 			$jsonQuizz = substr($jsonQuizz, 1);
 
-			$json = '{ "quizz" : { '.$jsonQuizz.' } , "questions" : '.$jsonQuestion.' }';
+			$json = '{ "quizz" : '.$jsonQuizz.' , "questions" : '.$jsonQuestion.' }';
 			return $json;
 		}
 		else
