@@ -75,6 +75,14 @@ $app->post('/profil/{id}/supprimer', function (Request $req, Response $resp, $ar
 	return (new quizzbox\control\quizzboxcontrol($this))->supprimerJoueur($req, $resp, $args);
 })->setName('supprimerJoueur')->add(new quizzbox\utils\authentificationAdmin());
 
+$app->get('/quizz/{id}', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->getQuizzJSON($req, $resp, $args);
+})->setName('getQuizzJSON');
+
+$app->get('/quizz/{id}/download', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->telechargerQuizz($req, $resp, $args);
+})->setName('telechargerQuizz');
+
 
 
 $app->run();

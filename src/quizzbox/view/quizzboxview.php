@@ -394,6 +394,11 @@ class quizzboxview
 				</li>
 				<li>
 					<b>Domaine de prédilection : </b><a href='".$this->baseURL."/categories/".$categoriePredilection->id."'>".$categoriePredilection->nom."</a>
+				</li>
+				<li>
+					<form method='get' action='".$this->baseURL."/quizz/".$this->data->id."/download/'>
+						<button type='submit'>Télécharger le quizz</button>
+					</form>
 				</li>";
 			
 		// Supprimer l'utilisateur
@@ -451,6 +456,25 @@ EOT;
 
 	private function creer($req, $resp, $args) {
 		return;
+	}
+	
+	private function getQuizzJSON($req, $resp, $args)
+	{
+		$json = "";
+		
+		if(is_array($this->data))
+		{
+			$json = json_encode($this->data);
+			$resp = $resp->withHeader('Content-Type', 'application/json');
+		}
+		else
+		{
+			$json = $this->data;
+			$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
+		}
+		
+		$resp->getBody()->write($json);
+		return $resp;
 	}
 
 
