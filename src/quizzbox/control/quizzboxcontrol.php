@@ -216,7 +216,7 @@ class quizzboxcontrol
 			$questions = \quizzbox\model\question::where('id_quizz', $id)->get();
 			
 			$jsonQuestion = '[ ';
-			foreach($question as $uneQuestion)
+			foreach($questions as $uneQuestion)
 			{
 				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "ennonce" : "'.str_replace("'", "\'", $uneQuestion->ennonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
 				
@@ -265,7 +265,7 @@ class quizzboxcontrol
 		}
 	}
 	
-	public function getQuizzJSON(Request $req, Response $resp, $args)
+	public function telechargerQuizz(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
 		$json = (new \quizzbox\control\quizzboxcontrol($this))->getQuizz($req, $resp, $args);

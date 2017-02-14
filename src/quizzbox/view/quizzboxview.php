@@ -216,7 +216,11 @@ class quizzboxview
 								<b>Difficulté évaluée : </b>
 								".$this->calculDifficulteQuizz($unQuizz)."
 							</li>
-							";
+							<li>
+								<form method='get' action='".$this->baseURL."/quizz/".$unQuizz->id."/download'>
+									<button type='submit'>Télécharger le quizz</button>
+								</form>
+							</li>";
 
 			if(isset($_SESSION["login"]))
 			{
@@ -224,7 +228,7 @@ class quizzboxview
 				{
 					$html .= "
 							<li>
-								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer/'>
+								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
 									<button type='submit'>Supprimer le quizz</button>
 								</form>
 							</li>
@@ -394,11 +398,6 @@ class quizzboxview
 				</li>
 				<li>
 					<b>Domaine de prédilection : </b><a href='".$this->baseURL."/categories/".$categoriePredilection->id."'>".$categoriePredilection->nom."</a>
-				</li>
-				<li>
-					<form method='get' action='".$this->baseURL."/quizz/".$this->data->id."/download/'>
-						<button type='submit'>Télécharger le quizz</button>
-					</form>
 				</li>";
 			
 		// Supprimer l'utilisateur
