@@ -76,7 +76,7 @@ class quizzboxcontrol
 				{
 					$_SESSION["login"] = "admin";
 					$_SESSION["message"] = 'Vous êtes connecté en tant qu\'administrateur !';
-					return (new \quizzbox\view\quizzboxview($this))->render('connexionTraitement', $req, $resp, $args);
+					return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 				}
 				else
 				{
@@ -90,7 +90,8 @@ class quizzboxcontrol
 				if($joueur !== null && $joueur !== false) {
 					if(password_verify($mdp, $joueur->motdepasse)) {
 						$_SESSION["login"] = $joueur->id;
-						return (new \quizzbox\view\quizzboxview($this))->render('connexionTraitement', $req, $resp, $args);
+						$_SESSION["message"] = 'Vous êtes connecté !';
+						return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 					}
 					else
 					{
