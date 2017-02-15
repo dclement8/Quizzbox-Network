@@ -146,6 +146,7 @@ class quizzboxcontrol
                                                 $user->pseudo = $args['pseudo'];
                                                 $user->motdepasse = $mdp;
                                                 $user->email = $args['email'];
+												$user->dateInscription = date("Y-m-d H:i:s");
                                                 $user->save();
                                                 return (new \quizzbox\view\quizzboxview($this))->render('inscriptionTraitement', $req, $resp, $args);
                                             }
