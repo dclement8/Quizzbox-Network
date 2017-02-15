@@ -91,7 +91,7 @@ var creer = (function() {
             for(var i=1; i <= json.questions.length; i++) {
                 tab += '<table id="question_'+i+'">';
                 tab += '<tr><td>Question n°'+i+' : <input type="text" onkeyup="creer.updateEnonce('+i+', this.value)" value="'+json.questions[i - 1].enonce+'" /></td>';
-                tab += '<td>coefficient <input type="number" onkeyup="creer.updateCoefficient('+i+', this.value)" value="'+json.questions[i - 1].coefficient+'" /></td></tr>';
+                tab += '<td>coefficient <input type="number" value="1" min="1" max="5" onkeyup="creer.updateCoefficient('+i+', this.value)" value="'+json.questions[i - 1].coefficient+'" /></td></tr>';
 
                 // Réponses
                 for(var j=1; j <= json.questions[i - 1].reponses.length; j++) {

@@ -47,6 +47,9 @@ class quizzboxview
 			}
 			$html .= "
 				<li>
+					<a href='".$this->baseURL."/creer'>Créer un quizz</a>
+				</li>
+				<li>
 					<a href='".$this->baseURL."/connexion'>Déconnexion</a>
 				</li>
 			";
