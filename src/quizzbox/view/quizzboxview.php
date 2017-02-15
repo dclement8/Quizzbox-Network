@@ -269,9 +269,9 @@ class quizzboxview
 
 			if(isset($_SESSION["login"]))
 			{
-				if(\quizzbox\model\joueur::where("id", $_SESSION["login"])->where("id_quizz", $unQuizz->id)->scores()->count() > 0)
+				if(\quizzbox\model\joueur::find($_SESSION["login"])->scores()->where("id_quizz", $unQuizz->id)->count() > 0)
 				{
-					$scores = \quizzbox\model\joueur::where("id", $_SESSION["login"])->where("id_quizz", $unQuizz->id)->scores()->first();
+					$scores = \quizzbox\model\joueur::find($_SESSION["login"])->scores()->where("id_quizz", $unQuizz->id)->first();
 
 					$html .= "<p>
 						<b>Votre score sur ce quizz est de : </b>".$scores->pivot->score."
