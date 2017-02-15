@@ -37,10 +37,15 @@ class quizzboxview
 		// Vérifier l'authentification pour afficher la connexion/inscription ou le profil
 		if(isset($_SESSION["login"]))
 		{
+			if($_SESSION["login"] != "admin")
+			{
+				$html .= "
+					<li>
+						<a href='".$this->baseURL."/profil'>Profil</a>
+					</li>
+				";
+			}
 			$html .= "
-				<li>
-					<a href='".$this->baseURL."/profil'>Profil</a>
-				</li>
 				<li>
 					<a href='".$this->baseURL."/connexion'>Déconnexion</a>
 				</li>
@@ -269,13 +274,16 @@ class quizzboxview
 
 			if(isset($_SESSION["login"]))
 			{
-				if(\quizzbox\model\joueur::find($_SESSION["login"])->scores()->where("id_quizz", $unQuizz->id)->count() > 0)
+				if(\quizzbox\model\joueur::find($_SESSION["login"]) != null)
 				{
-					$scores = \quizzbox\model\joueur::find($_SESSION["login"])->scores()->where("id_quizz", $unQuizz->id)->first();
+					if(\quizzbox\model\joueur::find($_SESSION["login"])->scores()->where("id_quizz", $unQuizz->id)->count() > 0)
+					{
+						$scores = \quizzbox\model\joueur::find($_SESSION["login"])->scores()->where("id_quizz", $unQuizz->id)->first();
 
-					$html .= "<p>
-						<b>Votre score sur ce quizz est de : </b>".$scores->pivot->score."
-					</p>";
+						$html .= "<p>
+							<b>Votre score sur ce quizz est de : </b>".$scores->pivot->score."
+						</p>";
+					}
 				}
 			}
 

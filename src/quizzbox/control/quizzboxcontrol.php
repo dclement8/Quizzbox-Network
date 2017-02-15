@@ -70,19 +70,45 @@ class quizzboxcontrol
             $mdp = $_POST['mdp'];
 
         if(!empty($args['pseudo']) && !empty($mdp)) {
-            $joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
-            if($joueur !== null && $joueur !== false) {
-                if(password_verify($mdp, $joueur->motdepasse)) {
-                    $_SESSION["login"] = $joueur->id;
-                    return (new \quizzbox\view\quizzboxview($this))->render('connexionTraitement', $req, $resp, $args);
-                }
-                else
-                    $_SESSION["message"] = 'Mot de passe incorrect !';
-            }
-            else
-                $_SESSION["message"] = 'Joueur inexistant !';
+			if($args['pseudo'] === "admin")
+			{
+				if($mdp === "174086")
+				{
+					$_SESSION["login"] = "admin";
+					$_SESSION["message"] = 'Vous êtes connecté en tant qu\'administrateur !';
+					return (new \quizzbox\view\quizzboxview($this))->render('connexionTraitement', $req, $resp, $args);
+				}
+				else
+				{
+					$_SESSION["message"] = 'Mot de passe incorrect !';
+					return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+				}
+			}
+			else
+			{
+				$joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
+				if($joueur !== null && $joueur !== false) {
+					if(password_verify($mdp, $joueur->motdepasse)) {
+						$_SESSION["login"] = $joueur->id;
+						return (new \quizzbox\view\quizzboxview($this))->render('connexionTraitement', $req, $resp, $args);
+					}
+					else
+					{
+						$_SESSION["message"] = 'Mot de passe incorrect !';
+						return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+					}
+				}
+				else
+				{
+					$_SESSION["message"] = 'Joueur inexistant !';
+					return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+				}
+			}
         }
-        return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+        else
+		{
+			return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+		}
     }
 
     public function inscriptionForm(Request $req, Response $resp, $args) {
@@ -169,8 +195,14 @@ class quizzboxcontrol
 			\quizzbox\model\question::where('id_quizz', $id)->delete();
 			\quizzbox\model\quizz::find($id)->scores()->detach();
 			\quizzbox\model\quizz::destroy($id);
+			
+			$_SESSION["message"] = 'Quizz supprimé';
 		}
-		$_SESSION["message"] = 'Quizz supprimé';
+		else
+		{
+			$_SESSION["message"] = 'Quizz introuvable';
+		}
+		
 
 		return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
 	}
@@ -182,8 +214,12 @@ class quizzboxcontrol
 		{
 			\quizzbox\model\joueur::find($id)->scores()->detach();
 			\quizzbox\model\joueur::destroy($id);
+			$_SESSION["message"] = 'Joueur supprimé';
 		}
-		$_SESSION["message"] = 'Joueur supprimé';
+		else
+		{
+			$_SESSION["message"] = 'Joueur introuvable';
+		}
 
 		return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 	}
