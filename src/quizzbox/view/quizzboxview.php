@@ -101,7 +101,7 @@ class quizzboxview
 			}
 		}
 		
-		$html .= " />
+		$html .= " required />
 						<button type='submit' id='actionRecherche'>OK</button>
 					</form>
 
