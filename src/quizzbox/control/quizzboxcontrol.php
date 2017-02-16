@@ -197,14 +197,14 @@ class quizzboxcontrol
 			\quizzbox\model\question::where('id_quizz', $id)->delete();
 			\quizzbox\model\quizz::find($id)->scores()->detach();
 			\quizzbox\model\quizz::destroy($id);
-			
+
 			$_SESSION["message"] = 'Quizz supprimé';
 		}
 		else
 		{
 			$_SESSION["message"] = 'Quizz introuvable';
 		}
-		
+
 
 		return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
 	}
@@ -245,7 +245,7 @@ class quizzboxcontrol
 	public function getQuizz(Request $req, Response $resp, $args)
 	{
 		// Retourne une représentation JSON du Quizz passé en paramètre (via le token).
-		
+
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT); // ID = Token
 		if(\quizzbox\model\quizz::where('tokenWeb', $id)->get()->toJson() != "[]")
 		{
@@ -255,7 +255,7 @@ class quizzboxcontrol
 			$jsonQuestion = '[ ';
 			foreach($questions as $uneQuestion)
 			{
-				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "ennonce" : "'.str_replace("'", "\'", $uneQuestion->ennonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
+				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "enonce" : "'.str_replace("'", "\'", $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
 
 				$reponses = \quizzbox\model\question::where('id_quizz', $id)->where('id_question', $uneQuestion->id)->get();
 				$i = 1;
@@ -317,7 +317,7 @@ class quizzboxcontrol
 			// Téléchargement du fichier Quizz
 
 			$dir = "upload/";
-			
+
 			$nomFichier = 'quizzbox_'.\quizzbox\model\quizz::where('tokenWeb', $id)->first()->tokenWeb.'_'.time().'.quizz';
 			$csv = new \SplFileObject($dir.$nomFichier, 'w');
 
@@ -339,16 +339,16 @@ class quizzboxcontrol
 			readfile($dir.$nomFichier);
 		}
 	}
-	
+
 	public function envoiScore(Request $req, Response $resp, $args)
 	{
 		// On passe également en paramètre dans la requête, le JSON du quizz joué et on le compare avec celui de la base de données côté serveur pour vérifier l'intégrité des données avant envoi.
-		
+
 		// On authentifie le joueur par pseudo@motdepasse dans l'URL où le mot de passe est crypté en sha256 côté client.
 		$joueur = filter_var($args['joueur'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-		
+
 		$score = filter_var($args['score'], FILTER_SANITIZE_NUMBER_INT);
-		
+
 		$authentification = explode("@", $joueur);
 		if(count($authentification) == 2) // Vérifier si il y a deux éléments : pseudo & mot de passe
 		{
@@ -365,15 +365,15 @@ class quizzboxcontrol
 				if(isset($jsonClient->quizz->tokenWeb))
 				{
 					$args['id'] = filter_var($jsonClient->quizz->tokenWeb, FILTER_SANITIZE_FULL_SPECIAL_CHARS); // La méthode getQuizz a besoin d'un args['id']
-					
+
 					// Comparaison des JSON Client et Serveur
 					$jsonServeur = json_decode((new \quizzbox\control\quizzboxcontrol($this))->getQuizz($req, $resp, $args));
-					
+
 					if($jsonServeur === $jsonClient)
 					{
 						if(\quizzbox\model\quizz::where('tokenWeb', $args['id'])->get()->toJson() != "[]")
 						{
-							// Intégrité du quizz vérifiée : vérifier pseudo & mot de passe. 
+							// Intégrité du quizz vérifiée : vérifier pseudo & mot de passe.
 							if(\quizzbox\model\joueur::where('pseudo', $authentification[0])->get()->toJson() != "[]")
 							{
 								$joueur = \quizzbox\model\joueur::where('pseudo', $authentification[0])->first();
@@ -383,7 +383,7 @@ class quizzboxcontrol
 									$scores = \quizzbox\model\quizz::where('tokenWeb', $id)->scores()->where("id_joueur", $joueur->id)->first();
 									$scores->pivot->score = $score;
 									$scores->save();
-									
+
 									$arr = array('success' => 'Score ajouté avec succès.');
 									$resp = $resp->withStatus(201);
 									return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);

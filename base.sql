@@ -50,7 +50,7 @@ CREATE TABLE categorie(
 
 CREATE TABLE question(
         id          int (11) Auto_increment  NOT NULL ,
-        ennonce     Varchar (255) ,
+        enonce     Varchar (255) ,
         coefficient Int ,
         id_quizz    Int NOT NULL ,
         PRIMARY KEY (id ,id_quizz )

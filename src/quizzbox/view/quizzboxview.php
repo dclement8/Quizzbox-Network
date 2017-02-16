@@ -485,7 +485,7 @@ EOT;
 		$html = <<<EOT
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
 			<input type="hidden" name="json" id="json" />
-			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" maxlength="255" value="" required/></p>
+			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" onkeyup="creer.updateNom(this.value)" maxlength="255" value="" required/></p>
 			<p><label for="categorie">Catégorie :</label>
 			<select name="categorie">
 EOT;
@@ -524,7 +524,7 @@ EOT;
 		$resp->getBody()->write($json);
 		return $resp;
 	}
-	
+
 	public function envoiScore($req, $resp, $args)
 	{
 		$json = "";

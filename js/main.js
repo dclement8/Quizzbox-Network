@@ -3,38 +3,53 @@ var creer = (function() {
 
     var $quizz = document.querySelector("#questions");
     var json = {
-        "questions":[
+        "quizz": {
+            "nom": "Quizz",
+            "id_categorie": 0,
+            "id": 0,
+            "tokenWeb": "0"
+        },
+        "questions": [
             {
+                "id": 0,
                 "enonce": "",
                 "coefficient": 1,
                 "reponses": [
-                    {"nom": "", "estSolution": false}
+                    {"id": 0, "nom": "", "estSolution": 0}
                 ]
             }
         ]
     };
 
-    /*
+    /* pour les réponses : 0 = faux, 1 = vrai
         Forme du json :
         {
+            "quizz": {
+                "nom": "Bob",
+                "id_categorie": 1,
+                "id": 2,
+                "tokenWeb": "abc"
+            },
             "questions": [
                 {
+                    "id": 1,
                     "enonce": "Dans quelle ville se situe la plus grande cathédrale de France ?",
                     "coefficient": 1,
                     "reponses": [
-                        {"nom": "Rouen", "estSolution": false},
-                        {"nom": "Amiens", "estSolution": true},
-                        {"nom": "Strasbourg", "estSolution": false}
+                        {"id": 1, "nom": "Rouen", "estSolution": 0},
+                        {"id": 2, "nom": "Amiens", "estSolution": 1},
+                        {"id": 3, "nom": "Strasbourg", "estSolution": 0}
                     ]
                 },
                 {
+                    "id": 2,
                     "enonce": "Quelle a été la première ville française libérée lors de la Seconde Guerre mondiale ?",
                     "coefficient": 1,
                     "reponses": [
-                        {"nom": "Bayeux", "estSolution": false},
-                        {"nom": "Caen", "estSolution": false},
-                        {"nom": "Marseille", "estSolution": false},
-                        {"nom": "Ajaccio", "estSolution": true}
+                        {"id": 4, "nom": "Bayeux", "estSolution": 0},
+                        {"id": 5, "nom": "Caen", "estSolution": 0},
+                        {"id": 6, "nom": "Marseille", "estSolution": 0},
+                        {"id": 7, "nom": "Ajaccio", "estSolution": 1}
                     ]
                 }
             ]
@@ -47,12 +62,12 @@ var creer = (function() {
         },
 
         ajouterQuestion: function() {
-            json.questions.push({"enonce":"","coefficient":1,"reponses":[{"nom": "", "estSolution": false}]});
+            json.questions.push({"id":0,"enonce":"","coefficient":1,"reponses":[{"id":0,"nom": "", "estSolution": false}]});
             creer.generer();
         },
 
         ajouterReponse: function(question) {
-            json.questions[question-1].reponses.push({"nom":"","estSolution":false});
+            json.questions[question-1].reponses.push({"id":0,"nom":"","estSolution":false});
             creer.generer();
         },
 
@@ -64,6 +79,10 @@ var creer = (function() {
         supprimerReponse: function(question, reponse) {
             json.questions[question-1].reponses.splice(reponse-1, 1);
             creer.generer();
+        },
+
+        updateNom: function(value) {
+            json.quizz.nom = value;
         },
 
         updateEnonce: function(question, value) {
@@ -110,6 +129,7 @@ var creer = (function() {
             }
 
             $quizz.innerHTML = tab;
+            console.log(json);
         },
 
         envoyer: function() {
