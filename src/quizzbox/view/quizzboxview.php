@@ -480,14 +480,45 @@ EOT;
 		return 'Inscription effectuée avec succès !';
 	}
 
+	private function modifierQuizz($req, $resp, $args) {
+		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
+		$html = <<<EOT
+		<form method="post" id="formulaire" action="{$this->baseURL}/modifierQuizz/{$args['id']}">
+			<input type="hidden" name="json" id="json" />
+			<p><label for="nom">Nom du quizz :</label> <input type="text" id="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
+			<p><label for="categorie">Catégorie :</label>
+			<select name="categorie" id="categorie" onchange="quizz.updateCategorie(this.value)">
+				<option>------------</option>
+EOT;
+		foreach($this->data['categories'] as $categorie) {
+			$html .= '<option value="'.$categorie->id.'">'.$categorie->nom.'</option>';
+		}
+		$html .= <<<EOT
+			</select></p>
+			<hr />
+			<h3>Questions</h3>
+
+			<div id="questions">
+			</div>
+
+			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Créer" onclick="quizz.envoyer()" /></p>
+		</form>
+		<script type="text/javascript">
+			/* Génération du formulaire au chargement */
+			window.onload = function() { quizz.generer({$this->data['json']}); }
+		</script>
+EOT;
+		return $html;
+	}
+
 	private function creer($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
 			<input type="hidden" name="json" id="json" />
-			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" onkeyup="creer.updateNom(this.value)" maxlength="255" value="" required/></p>
+			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
 			<p><label for="categorie">Catégorie :</label>
-			<select name="categorie" onchange="creer.updateCategorie(this.value)">
+			<select name="categorie" onchange="quizz.updateCategorie(this.value)">
 				<option>------------</option>
 EOT;
 		foreach($this->data as $categorie) {
@@ -501,11 +532,11 @@ EOT;
 			<div id="questions">
 			</div>
 
-			<p><input type="button" value="Ajouter une question" onclick="creer.ajouterQuestion()" /> <input type="button" value="Créer" onclick="creer.envoyer()" /></p>
+			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Créer" onclick="quizz.envoyer()" /></p>
 		</form>
 		<script type="text/javascript">
 			/* Génération du formulaire au chargement */
-			window.onload = function() { creer.generer(); }
+			window.onload = function() { quizz.generer(); }
 		</script>
 EOT;
 		return $html;

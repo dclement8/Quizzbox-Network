@@ -13,9 +13,9 @@ $configuration = [
 		return (function($req, $resp) {
 			$args = null;
 			$resp = $resp->withStatus(404);
-			
+
 			$_SESSION["message"] = "Erreur 404 : la page que vous avez demandé est introuvable !";
-			
+
 			return (new quizzbox\control\quizzboxcontrol(null))->accueil($req, $resp, $args);
 		});
 	}
@@ -72,6 +72,10 @@ $app->post('/connexion', function (Request $req, Response $resp, $args) {
 $app->get('/creer', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->creer($req, $resp, $args);
 })->setName('creer')->add(new quizzbox\utils\authentification());
+
+$app->get('/modifier/{id}', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->modifierQuizz($req, $resp, $args);
+})->setName('modifierQuizz')->add(new quizzbox\utils\authentification());
 
 $app->post('/quizz/{id}/supprimer', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->supprimerQuizz($req, $resp, $args);

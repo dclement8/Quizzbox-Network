@@ -1,5 +1,5 @@
-var creer = (function() {
-    // Functions nécessaires à la création d'un quizz
+var quizz = (function() {
+    // Functions nécessaires à la création/modification d'un quizz
 
     var $quizz = document.querySelector("#questions");
     var json = {
@@ -63,22 +63,22 @@ var creer = (function() {
 
         ajouterQuestion: function() {
             json.questions.push({"id":0,"enonce":"","coefficient":1,"reponses":[{"id":0,"nom": "", "estSolution": false}]});
-            creer.generer();
+            quizz.generer();
         },
 
         ajouterReponse: function(question) {
             json.questions[question-1].reponses.push({"id":0,"nom":"","estSolution":false});
-            creer.generer();
+            quizz.generer();
         },
 
         supprimerQuestion: function(question) {
             json.questions.splice(question-1, 1);
-            creer.generer();
+            quizz.generer();
         },
 
         supprimerReponse: function(question, reponse) {
             json.questions[question-1].reponses.splice(reponse-1, 1);
-            creer.generer();
+            quizz.generer();
         },
 
         updateNom: function(value) {
@@ -105,29 +105,36 @@ var creer = (function() {
             json.questions[question-1].reponses[reponse-1].estSolution = !(json.questions[question-1].reponses[reponse-1].estSolution);
         },
 
-        generer: function() {
+        generer: function(data = null) {
             // Génère le formulaire de questions/réponses à partir du JSON
             var tab = '';
 
+            if(data !== null) {
+                json = data;
+            }
+
             console.log("Génération en cours");
+
+            document.querySelector("#nom").value = json.quizz.nom;
+            document.querySelector("#categorie").value = json.quizz.id_categorie;
 
             for(var i=1; i <= json.questions.length; i++) {
                 tab += '<table id="question_'+i+'">';
-                tab += '<tr><td>Question n°'+i+' : <input type="text" onkeyup="creer.updateEnonce('+i+', this.value)" value="'+json.questions[i - 1].enonce+'" /></td>';
-                tab += '<td>coefficient <input type="number" value="1" min="1" max="5" onkeyup="creer.updateCoefficient('+i+', this.value)" value="'+json.questions[i - 1].coefficient+'" /></td></tr>';
+                tab += '<tr><td>Question n°'+i+' : <input type="text" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.questions[i - 1].enonce+'" /></td>';
+                tab += '<td>coefficient <input type="number" value="1" min="1" max="5" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.questions[i - 1].coefficient+'" /></td></tr>';
 
                 // Réponses
                 for(var j=1; j <= json.questions[i - 1].reponses.length; j++) {
-                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onkeyup="creer.updateReponse('+i+', '+j+', this.value)" value="'+json.questions[i - 1].reponses[j - 1].nom+'" /></td>';
-                    tab += '<td>est solution ? <input type="checkbox" onclick="creer.updateSolution('+i+', '+j+')"';
+                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.questions[i - 1].reponses[j - 1].nom+'" /></td>';
+                    tab += '<td>est solution ? <input type="checkbox" onclick="quizz.updateSolution('+i+', '+j+')"';
                     if(json.questions[i-1].reponses[j-1].estSolution) tab += ' checked';
                     tab += ' />';
-                    if(j > 1) tab += '<input type="button" value="X" onclick="creer.supprimerReponse('+i+', '+j+')">';
+                    if(j > 1) tab += '<input type="button" value="X" onclick="quizz.supprimerReponse('+i+', '+j+')">';
                     tab += '</td></tr>';
                 }
 
-                tab += '<tr class="button"><td><input type="button" value="Ajouter une réponse" onclick="creer.ajouterReponse('+i+')" /> ';
-                if(i > 1) tab += '<input type="button" value="X" onclick="creer.supprimerQuestion('+i+')">';
+                tab += '<tr class="button"><td><input type="button" value="Ajouter une réponse" onclick="quizz.ajouterReponse('+i+')" /> ';
+                if(i > 1) tab += '<input type="button" value="X" onclick="quizz.supprimerQuestion('+i+')">';
                 tab += '</td><td></td></tr>';
                 tab += '</table>';
             }
@@ -137,7 +144,7 @@ var creer = (function() {
         },
 
         envoyer: function() {
-            document.querySelector("#json").value = creer.getJSON();
+            document.querySelector("#json").value = quizz.getJSON();
 
             if(confirm("Voulez-vous créer ce quizz ?")) {
                 document.querySelector("#formulaire").submit();
@@ -146,4 +153,4 @@ var creer = (function() {
     }
 }) ();
 
-//creer.generer();
+//quizz.generer();

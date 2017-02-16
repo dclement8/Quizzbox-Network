@@ -188,6 +188,16 @@ class quizzboxcontrol
 		return (new \quizzbox\view\quizzboxview($data))->render('creer', $req, $resp, $args);
     }
 
+    public function modifierQuizz(Request $req, Response $resp, $args)
+	{
+        $args['without_headers'] = true;
+        $data['json'] = $this->getQuizzJSON($req, $resp, $args);
+        $data['categories'] = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
+        if($data != '{"error":"quizz introuvable !"}') {
+		    return (new \quizzbox\view\quizzboxview($data))->render('modifierQuizz', $req, $resp, $args);
+        }
+    }
+
 	public function supprimerQuizz(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
@@ -296,6 +306,9 @@ class quizzboxcontrol
 			$resp = $resp->withStatus(404);
 			return (new \quizzbox\view\quizzboxview($arr))->getQuizzJSON($req, $resp, $args);
 		}
+        elseif(isset($args['without_headers'])) {
+            return $json;
+        }
 		else
 		{
 			return (new \quizzbox\view\quizzboxview($json))->getQuizzJSON($req, $resp, $args);
@@ -432,7 +445,7 @@ class quizzboxcontrol
 			return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
 		}
 	}
-	
+
 	public function rechercher(Request $req, Response $resp, $args)
 	{
 		if(isset($_GET["q"]))
@@ -445,7 +458,7 @@ class quizzboxcontrol
 			{
 				$q = filter_var($_GET["q"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 				$resultats = \quizzbox\model\quizz::where('nom', 'like', '*'.$q.'*')->get();
-				
+
 				return (new \quizzbox\view\quizzboxview($resultats))->render('rechercher', $req, $resp, $args);
 			}
 		}
