@@ -85,6 +85,10 @@ var creer = (function() {
             json.quizz.nom = value;
         },
 
+        updateCategorie: function(value) {
+            json.quizz.id_categorie = value;
+        },
+
         updateEnonce: function(question, value) {
             json.questions[question-1].enonce = value;
         },
@@ -142,4 +146,4 @@ var creer = (function() {
     }
 }) ();
 
-creer.generer();
+//creer.generer();

@@ -90,9 +90,9 @@ class quizzboxview
 						".$this->menu($req, $resp, $args)."
 					</ul>
 					<form id='recherche' name='recherche' method='GET' action='".$this->baseURL."/recherche'>
-						<input type='text' name='q' id='rechercheText' placeholder='Rechercher un quizz...' 
+						<input type='text' name='q' id='rechercheText' placeholder='Rechercher un quizz...'
 		";
-		
+
 		if(isset($_GET["q"]))
 		{
 			if($_GET["q"] != "")
@@ -100,7 +100,7 @@ class quizzboxview
 				$html .= "value='".filter_var($_GET["q"], FILTER_SANITIZE_FULL_SPECIAL_CHARS)."'";
 			}
 		}
-		
+
 		$html .= " required />
 						<button type='submit' id='actionRecherche'>OK</button>
 					</form>
@@ -487,10 +487,11 @@ EOT;
 			<input type="hidden" name="json" id="json" />
 			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" onkeyup="creer.updateNom(this.value)" maxlength="255" value="" required/></p>
 			<p><label for="categorie">Catégorie :</label>
-			<select name="categorie">
+			<select name="categorie" onchange="creer.updateCategorie(this.value)">
+				<option>------------</option>
 EOT;
 		foreach($this->data as $categorie) {
-			$html .= '<option>'.$categorie->nom.'</option>';
+			$html .= '<option value="'.$categorie->id.'">'.$categorie->nom.'</option>';
 		}
 		$html .= <<<EOT
 			</select></p>
@@ -502,6 +503,10 @@ EOT;
 
 			<p><input type="button" value="Ajouter une question" onclick="creer.ajouterQuestion()" /> <input type="button" value="Créer" onclick="creer.envoyer()" /></p>
 		</form>
+		<script type="text/javascript">
+			/* Génération du formulaire au chargement */
+			window.onload = function() { creer.generer(); }
+		</script>
 EOT;
 		return $html;
 	}
@@ -543,11 +548,11 @@ EOT;
 		$resp->getBody()->write($json);
 		return $resp;
 	}
-	
+
 	private function rechercher($req, $resp, $args)
 	{
 		$html = $this->afficherQuizz($req, $resp, $args);
-		
+
 		return $html;
 	}
 
