@@ -94,6 +94,10 @@ $app->get('/quizz/{id}/download', function (Request $req, Response $resp, $args)
 	return (new quizzbox\control\quizzboxcontrol($this))->telechargerQuizz($req, $resp, $args);
 })->setName('telechargerQuizz');
 
+$app->put('/quizz/joueur/{joueur}/scores/{score}', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->envoiScore($req, $resp, $args);
+})->setName('envoiScore');
+
 
 
 $app->run();

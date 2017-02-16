@@ -490,7 +490,26 @@ EOT;
 		return $html;
 	}
 
-	private function getQuizzJSON($req, $resp, $args)
+	public function getQuizzJSON($req, $resp, $args)
+	{
+		$json = "";
+
+		if(is_array($this->data))
+		{
+			$json = json_encode($this->data);
+			$resp = $resp->withHeader('Content-Type', 'application/json');
+		}
+		else
+		{
+			$json = $this->data;
+			$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
+		}
+
+		$resp->getBody()->write($json);
+		return $resp;
+	}
+	
+	public function envoiScore($req, $resp, $args)
 	{
 		$json = "";
 

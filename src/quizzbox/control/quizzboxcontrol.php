@@ -88,7 +88,7 @@ class quizzboxcontrol
 			{
 				$joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
 				if($joueur !== null && $joueur !== false) {
-					if(password_verify($mdp, $joueur->motdepasse)) {
+					if(password_verify(hash("sha256", $mdp), $joueur->motdepasse)) {
 						$_SESSION["login"] = $joueur->id;
 						$_SESSION["message"] = 'Vous êtes connecté !';
 						return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
@@ -142,7 +142,7 @@ class quizzboxcontrol
                                         if($mdp == $mdpconfirm) {
                                             if(strlen($mdp) > 5) {
                                                 /* Bien ! . */
-                                                $mdp = password_hash($mdp, PASSWORD_BCRYPT);
+                                                $mdp = password_hash(hash("sha256", $mdp), PASSWORD_BCRYPT);
                                                 $user = new \quizzbox\model\joueur();
                                                 $user->pseudo = $args['pseudo'];
                                                 $user->motdepasse = $mdp;
@@ -294,11 +294,11 @@ class quizzboxcontrol
 		{
 			$arr = array('error' => 'quizz introuvable !');
 			$resp = $resp->withStatus(404);
-			return (new \lbs\view\lbsview($arr))->render('getQuizzJSON', $req, $resp, $args);
+			return (new \quizzbox\view\quizzboxview($arr))->getQuizzJSON($req, $resp, $args);
 		}
 		else
 		{
-			return (new \lbs\view\lbsview($json))->render('getQuizzJSON', $req, $resp, $args);
+			return (new \quizzbox\view\quizzboxview($json))->getQuizzJSON($req, $resp, $args);
 		}
 	}
 
@@ -337,6 +337,99 @@ class quizzboxcontrol
 			header("Content-Length: ".$size);
 
 			readfile($dir.$nomFichier);
+		}
+	}
+	
+	public function envoiScore(Request $req, Response $resp, $args)
+	{
+		// On passe également en paramètre dans la requête, le JSON du quizz joué et on le compare avec celui de la base de données côté serveur pour vérifier l'intégrité des données avant envoi.
+		
+		// On authentifie le joueur par pseudo@motdepasse dans l'URL où le mot de passe est crypté en sha256 côté client.
+		$joueur = filter_var($args['joueur'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		
+		$score = filter_var($args['score'], FILTER_SANITIZE_NUMBER_INT);
+		
+		$authentification = explode("@", $joueur);
+		if(count($authentification) == 2) // Vérifier si il y a deux éléments : pseudo & mot de passe
+		{
+			if((json_decode($req->getBody())) == null)
+			{
+				// JSON invalide
+				$arr = array('error' => 'Le JSON envoyé est formé de manière incorrect.');
+				$resp = $resp->withStatus(400);
+				return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+			}
+			else
+			{
+				$jsonClient = json_decode($req->getBody());
+				if(isset($jsonClient->quizz->tokenWeb))
+				{
+					$args['id'] = filter_var($jsonClient->quizz->tokenWeb, FILTER_SANITIZE_FULL_SPECIAL_CHARS); // La méthode getQuizz a besoin d'un args['id']
+					
+					// Comparaison des JSON Client et Serveur
+					$jsonServeur = json_decode((new \quizzbox\control\quizzboxcontrol($this))->getQuizz($req, $resp, $args));
+					
+					if($jsonServeur === $jsonClient)
+					{
+						if(\quizzbox\model\quizz::where('tokenWeb', $args['id'])->get()->toJson() != "[]")
+						{
+							// Intégrité du quizz vérifiée : vérifier pseudo & mot de passe. 
+							if(\quizzbox\model\joueur::where('pseudo', $authentification[0])->get()->toJson() != "[]")
+							{
+								$joueur = \quizzbox\model\joueur::where('pseudo', $authentification[0])->first();
+								if(password_verify($authentification[1], $joueur->motdepasse))
+								{
+									// Authentification réussie !
+									$scores = \quizzbox\model\quizz::where('tokenWeb', $id)->scores()->where("id_joueur", $joueur->id)->first();
+									$scores->pivot->score = $score;
+									$scores->save();
+									
+									$arr = array('success' => 'Score ajouté avec succès.');
+									$resp = $resp->withStatus(201);
+									return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+								}
+								else
+								{
+									$arr = array('error' => 'Erreur d\'authentification.');
+									$resp = $resp->withStatus(400);
+									return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+								}
+							}
+							else
+							{
+								$arr = array('error' => 'Joueur introuvable.');
+								$resp = $resp->withStatus(400);
+								return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+							}
+						}
+						else
+						{
+							$arr = array('error' => 'Le quizz est introuvable sur le serveur.');
+							$resp = $resp->withStatus(404);
+							return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+						}
+					}
+					else
+					{
+						// Oups ! .
+						$arr = array('error' => 'Erreur d\'intégrité du quizz.');
+						$resp = $resp->withStatus(400);
+						return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+					}
+				}
+				else
+				{
+					$arr = array('error' => 'Impossible de vérifier le quizz.');
+					$resp = $resp->withStatus(400);
+					return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+				}
+			}
+		}
+		else
+		{
+			$arr = array('error' => 'Erreur d\authentification.');
+			$resp = $resp->withStatus(400);
+			return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
 		}
 	}
 }
