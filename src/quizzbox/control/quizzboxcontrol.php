@@ -432,4 +432,26 @@ class quizzboxcontrol
 			return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
 		}
 	}
+	
+	public function rechercher(Request $req, Response $resp, $args)
+	{
+		if(isset($_GET["q"]))
+		{
+			if($_GET["q"] === "")
+			{
+				return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+			}
+			else
+			{
+				$q = filter_var($_GET["q"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+				$resultats = \quizzbox\model\quizz::where('nom', 'like', '*'.$q.'*')->get();
+				
+				return (new \quizzbox\view\quizzboxview($resultats))->render('rechercher', $req, $resp, $args);
+			}
+		}
+		else
+		{
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
 }

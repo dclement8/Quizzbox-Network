@@ -12,7 +12,6 @@ $configuration = [
 	'notFoundHandler' => function($c) {
 		return (function($req, $resp) {
 			$args = null;
-			//return $resp->withStatus(404)->getBody()->write('URI introuvable');
 			$resp = $resp->withStatus(404);
 			
 			$_SESSION["message"] = "Erreur 404 : la page que vous avez demandé est introuvable !";
@@ -97,6 +96,10 @@ $app->get('/quizz/{id}/download', function (Request $req, Response $resp, $args)
 $app->put('/quizz/joueur/{joueur}/scores/{score}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->envoiScore($req, $resp, $args);
 })->setName('envoiScore');
+
+$app->get('/recherche', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->rechercher($req, $resp, $args);
+})->setName('rechercher');
 
 
 

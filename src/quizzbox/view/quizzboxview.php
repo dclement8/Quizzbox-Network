@@ -89,6 +89,21 @@ class quizzboxview
 					<ul id='menu'>
 						".$this->menu($req, $resp, $args)."
 					</ul>
+					<form id='recherche' name='recherche' method='GET' action='".$this->baseURL."/recherche'>
+						<input type='text' name='q' id='rechercheText' placeholder='Rechercher un quizz...' 
+		";
+		
+		if(isset($_GET["q"]))
+		{
+			if($_GET["q"] != "")
+			{
+				$html .= "value='".filter_var($_GET["q"], FILTER_SANITIZE_FULL_SPECIAL_CHARS)."'";
+			}
+		}
+		
+		$html .= " />
+						<button type='submit' id='actionRecherche'>OK</button>
+					</form>
 
 		";
 		if(isset($_SESSION["message"]))
@@ -205,7 +220,8 @@ class quizzboxview
 
 	private function afficherQuizz($req, $resp, $args)
 	{
-		$html = "<ul class='elements'>";
+		$html = "<p>".count($this->data)." quizz trouvé(s)</p>";
+		$html .= "<ul class='elements'>";
 		foreach($this->data as $unQuizz)
 		{
 			$html .= "
@@ -526,6 +542,13 @@ EOT;
 
 		$resp->getBody()->write($json);
 		return $resp;
+	}
+	
+	private function rechercher($req, $resp, $args)
+	{
+		$html = $this->afficherQuizz($req, $resp, $args);
+		
+		return $html;
 	}
 
 
