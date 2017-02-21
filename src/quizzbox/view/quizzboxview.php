@@ -557,7 +557,7 @@ EOT;
 			$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
 		}
 
-		$resp->getBody()->write($json);
+		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($json);
 		return $resp;
 	}
 
@@ -576,7 +576,7 @@ EOT;
 			$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
 		}
 
-		$resp->getBody()->write($json);
+		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($json);
 		return $resp;
 	}
 
