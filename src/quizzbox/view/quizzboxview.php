@@ -586,6 +586,22 @@ EOT;
 
 		return $html;
 	}
+	
+	public function afficherCategoriesJSON($req, $resp, $args)
+	{
+		$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
+
+		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($this->data);
+		return $resp;
+	}
+	
+	public function afficherQuizzJSON($req, $resp, $args)
+	{
+		$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
+
+		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($this->data);
+		return $resp;
+	}
 
 
 	// -----------

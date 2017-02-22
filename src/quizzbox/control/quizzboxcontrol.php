@@ -467,4 +467,19 @@ class quizzboxcontrol
 			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 		}
 	}
+	
+	public function afficherCategoriesJSON(Request $req, Response $resp, $args)
+	{
+		$categories = \quizzbox\model\categorie::orderBy('nom')->get()->toJson();
+
+		return (new \quizzbox\view\quizzboxview($categories))->afficherCategoriesJSON($req, $resp, $args);
+    }
+
+	public function afficherQuizzJSON(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		$quizz = \quizzbox\model\quizz::where('id_categorie', $id)->orderBy('nom')->get()->toJson();
+
+		return (new \quizzbox\view\quizzboxview($quizz))->afficherQuizzJSON($req, $resp, $args);
+    }
 }

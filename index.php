@@ -32,26 +32,21 @@ $app = new \Slim\App($c);
 	}
 )->setName('exemple');*/
 
-$app->get('/',
-	function (Request $req, Response $resp, $args)
-	{
-		return (new quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
-	}
-)->setName('accueil');
+$app->get('/', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+})->setName('accueil');
 
-$app->get('/categories',
-	function (Request $req, Response $resp, $args)
-	{
-		return (new quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
-	}
-)->setName('categories');
+$app->get('/categories/json', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->afficherCategoriesJSON($req, $resp, $args);
+})->setName('afficherCategoriesJSON');
 
-$app->get('/categories/{id}',
-	function (Request $req, Response $resp, $args)
-	{
-		return (new quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
-	}
-)->setName('afficherCategories');
+$app->get('/categories', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
+})->setName('afficherCategories');
+
+$app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
+})->setName('afficherQuizz');
 
 $app->get('/inscription', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->inscriptionForm($req, $resp, $args);
@@ -105,6 +100,9 @@ $app->get('/recherche', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->rechercher($req, $resp, $args);
 })->setName('rechercher');
 
+$app->get('/categories/{id}/json', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->afficherQuizzJSON($req, $resp, $args);
+})->setName('afficherQuizzJSON');
 
 
 $app->run();
