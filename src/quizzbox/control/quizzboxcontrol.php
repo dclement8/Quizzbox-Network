@@ -301,18 +301,19 @@ class quizzboxcontrol
 	{
 		// Retourne une représentation JSON du Quizz passé en paramètre (via le token).
 
-		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT); // ID = Token
+		$id = filter_var($args['id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // ID = Token
 		if(\quizzbox\model\quizz::where('tokenWeb', $id)->get()->toJson() != "[]")
 		{
 			$quizz = \quizzbox\model\quizz::where('tokenWeb', $id)->get();
-			$questions = \quizzbox\model\question::where('id_quizz', $id)->get();
+			$idQuizz = $quizz[0]->id;
+			$questions = \quizzbox\model\question::where('id_quizz', $idQuizz)->get();
 
 			$jsonQuestion = '[ ';
 			foreach($questions as $uneQuestion)
 			{
 				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "enonce" : "'.str_replace("'", "\'", $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
 
-				$reponses = \quizzbox\model\question::where('id_quizz', $id)->where('id_question', $uneQuestion->id)->get();
+				$reponses = \quizzbox\model\reponse::where('id_quizz', $idQuizz)->where('id_question', $uneQuestion->id)->get();
 				$i = 1;
 				foreach($reponses as $uneReponse)
 				{
@@ -362,7 +363,7 @@ class quizzboxcontrol
 
 	public function telechargerQuizz(Request $req, Response $resp, $args)
 	{
-		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		$id = filter_var($args['id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$json = (new \quizzbox\control\quizzboxcontrol($this))->getQuizz($req, $resp, $args);
 
 		if($json == null)
@@ -522,9 +523,17 @@ class quizzboxcontrol
 
 	public function afficherQuizzJSON(Request $req, Response $resp, $args)
 	{
+		// Retourne [] si vide ou n'existe pas.
+		
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
 		$quizz = \quizzbox\model\quizz::where('id_categorie', $id)->orderBy('nom')->get()->toJson();
 
 		return (new \quizzbox\view\quizzboxview($quizz))->afficherQuizzJSON($req, $resp, $args);
     }
+	
+	public function getNbQuestionsQuizz(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		echo \quizzbox\model\question::where('id_quizz', $id)->count();
+	}
 }

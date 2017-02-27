@@ -92,6 +92,14 @@ $app->get('/quizz/{id}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->getQuizzJSON($req, $resp, $args);
 })->setName('getQuizzJSON');
 
+$app->get('/quizz/{id}/install', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->getQuizz($req, $resp, $args);
+})->setName('getQuizzForQuizzbox');
+
+$app->get('/quizz/{id}/nbQuestions', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->getNbQuestionsQuizz($req, $resp, $args);
+})->setName('getNbQuestionsQuizz');
+
 $app->get('/quizz/{id}/download', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->telechargerQuizz($req, $resp, $args);
 })->setName('telechargerQuizz');
