@@ -436,8 +436,8 @@ class quizzboxcontrol
 							// Intégrité du quizz vérifiée : vérifier pseudo & mot de passe.
 							if(\quizzbox\model\joueur::where('pseudo', $authentification[0])->get()->toJson() != "[]")
 							{
-								$joueur = \quizzbox\model\joueur::where('pseudo', $authentification[0])->first();
-								if(password_verify($authentification[1], $joueur->motdepasse))
+								$lejoueur = \quizzbox\model\joueur::where('pseudo', $authentification[0])->first();
+								if(password_verify($authentification[1], $lejoueur->motdepasse))
 								{
 									// Authentification réussie !
 									
@@ -446,7 +446,7 @@ class quizzboxcontrol
 									
 									if(\quizzbox\model\joueur::where('pseudo', $authentification[0])->scores()->where("id_quizz", $idQuizz)->count() > 0)
 									{
-										$scores = \quizzbox\model\quizz::where('tokenWeb', $id)->scores()->where("id_joueur", $joueur->id)->first();
+										$scores = \quizzbox\model\quizz::where('tokenWeb', $id)->scores()->where("id_joueur", $lejoueur->id)->first();
 										$scores->pivot->score = $score;
 										$scores->save();
 
