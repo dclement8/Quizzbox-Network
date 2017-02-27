@@ -517,7 +517,7 @@ class quizzboxcontrol
 			else
 			{
 				$q = filter_var($_GET["q"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-				$resultats = \quizzbox\model\quizz::where('nom', 'like', '*'.$q.'*')->get();
+				$resultats = \quizzbox\model\quizz::where('nom', 'like', '%'.$q.'%')->get();
 
 				return (new \quizzbox\view\quizzboxview($resultats))->render('rechercher', $req, $resp, $args);
 			}
