@@ -311,7 +311,7 @@ class quizzboxcontrol
 			$jsonQuestion = '[ ';
 			foreach($questions as $uneQuestion)
 			{
-				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "enonce" : "'.str_replace("'", "\'", $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
+				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "enonce" : "'.str_replace('"', '\"', $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
 
 				$reponses = \quizzbox\model\reponse::where('id_quizz', $idQuizz)->where('id_question', $uneQuestion->id)->get();
 				$i = 1;
@@ -326,11 +326,12 @@ class quizzboxcontrol
 				}
 				$jsonQuestion .= ' ] }';
 			}
-			$jsonQuestion .= ' ]';
+			$jsonQuestion .= ' ] }';
 
 			$jsonQuizz = $quizz->toJson();
 			$jsonQuizz = substr($jsonQuizz, 0, -1);
 			$jsonQuizz = substr($jsonQuizz, 1);
+			$jsonQuizz = substr($jsonQuizz, 0, -1);
 
 			$json = '{ "quizz" : '.$jsonQuizz.' , "questions" : '.$jsonQuestion.' }';
 			return $json;
@@ -439,13 +440,26 @@ class quizzboxcontrol
 								if(password_verify($authentification[1], $joueur->motdepasse))
 								{
 									// Authentification réussie !
-									$scores = \quizzbox\model\quizz::where('tokenWeb', $id)->scores()->where("id_joueur", $joueur->id)->first();
-									$scores->pivot->score = $score;
-									$scores->save();
+									
+									// Vérifier si le joueur n'a pas déjà joué au quizz
+									$idQuizz = \quizzbox\model\quizz::where('tokenWeb', $id)->first()->id;
+									
+									if(\quizzbox\model\joueur::where('pseudo', $authentification[0])->scores()->where("id_quizz", $idQuizz)->count() > 0)
+									{
+										$scores = \quizzbox\model\quizz::where('tokenWeb', $id)->scores()->where("id_joueur", $joueur->id)->first();
+										$scores->pivot->score = $score;
+										$scores->save();
 
-									$arr = array('success' => 'Score ajouté avec succès.');
-									$resp = $resp->withStatus(201);
-									return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+										$arr = array('success' => 'Score ajouté avec succès.');
+										$resp = $resp->withStatus(201);
+										return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+									}
+									else
+									{
+										$arr = array('error' => 'Vous avez déjà enregistré un score à ce quizz.');
+										$resp = $resp->withStatus(200);
+										return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+									}
 								}
 								else
 								{
