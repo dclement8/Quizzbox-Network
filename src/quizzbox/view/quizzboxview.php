@@ -485,10 +485,10 @@ EOT;
 		$html = <<<EOT
 		<form method="post" id="formulaire" action="{$this->baseURL}/modifierQuizz/{$args['id']}">
 			<input type="hidden" name="json" id="json" />
-			<p><label for="nom">Nom du quizz :</label> <input type="text" id="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
+			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" id="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
 			<p><label for="categorie">Catégorie :</label>
-			<select name="categorie" id="categorie" onchange="quizz.updateCategorie(this.value)">
-				<option>------------</option>
+			<select name="categorie" name="categorie" id="categorie" onchange="quizz.updateCategorie(this.value)">
+				<option value="0">------------</option>
 EOT;
 		foreach($this->data['categories'] as $categorie) {
 			$html .= '<option value="'.$categorie->id.'">'.$categorie->nom.'</option>';
@@ -516,12 +516,12 @@ EOT;
 		$html = <<<EOT
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
 			<input type="hidden" name="json" id="json" />
-			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
+			<p><label for="nom">Nom du quizz :</label> <input type="text" id="nom" name="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
 			<p><label for="categorie">Catégorie :</label>
-			<select name="categorie" onchange="quizz.updateCategorie(this.value)">
-				<option>------------</option>
+			<select name="categorie" id="categorie" onchange="quizz.updateCategorie(this.value)">
+				<option value="0">------------</option>
 EOT;
-		foreach($this->data as $categorie) {
+		foreach($this->data['categories'] as $categorie) {
 			$html .= '<option value="'.$categorie->id.'">'.$categorie->nom.'</option>';
 		}
 		$html .= <<<EOT
@@ -536,7 +536,7 @@ EOT;
 		</form>
 		<script type="text/javascript">
 			/* Génération du formulaire au chargement */
-			window.onload = function() { quizz.generer(); }
+			window.onload = function() { quizz.generer({$this->data['json']}); }
 		</script>
 EOT;
 		return $html;
@@ -586,7 +586,7 @@ EOT;
 
 		return $html;
 	}
-	
+
 	public function afficherCategoriesJSON($req, $resp, $args)
 	{
 		$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
@@ -594,7 +594,7 @@ EOT;
 		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($this->data);
 		return $resp;
 	}
-	
+
 	public function afficherQuizzJSON($req, $resp, $args)
 	{
 		$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');

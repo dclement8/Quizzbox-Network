@@ -68,6 +68,10 @@ $app->get('/creer', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->creer($req, $resp, $args);
 })->setName('creer')->add(new quizzbox\utils\authentification());
 
+$app->post('/creer', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->creerTraitement($req, $resp, $args);
+})->setName('creerTraitement')->add(new quizzbox\utils\authentification());
+
 $app->get('/modifier/{id}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->modifierQuizz($req, $resp, $args);
 })->setName('modifierQuizz')->add(new quizzbox\utils\authentification());

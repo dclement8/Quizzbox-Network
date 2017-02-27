@@ -144,13 +144,16 @@ var quizz = (function() {
         },
 
         envoyer: function() {
-            document.querySelector("#json").value = quizz.getJSON();
+            if(json.quizz.id_categorie == '' || json.quizz.id_categorie == 0 || json.quizz.id_categorie === undefined) {
+                alert('Veuillez choisir une catégorie !');
+            }
+            else {
+                document.querySelector("#json").value = JSON.stringify(quizz.getJSON());
 
-            if(confirm("Voulez-vous créer ce quizz ?")) {
-                document.querySelector("#formulaire").submit();
+                if(confirm("Voulez-vous créer ce quizz ?")) {
+                    document.querySelector("#formulaire").submit();
+                }
             }
         }
     }
 }) ();
-
-//quizz.generer();

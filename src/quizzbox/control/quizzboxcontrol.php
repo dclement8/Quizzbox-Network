@@ -184,7 +184,52 @@ class quizzboxcontrol
 
     public function creer(Request $req, Response $resp, $args)
 	{
-        $data = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
+        $data['json'] = '';
+        $data['categories'] = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
+		return (new \quizzbox\view\quizzboxview($data))->render('creer', $req, $resp, $args);
+    }
+
+    public function creerTraitement(Request $req, Response $resp, $args)
+	{
+        // TODO sécuriser variables et vérifier données
+        $data['json'] = '';
+        $data['categories'] = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
+
+        if(isset($_POST['json'])) {
+            $json = json_decode($_POST['json']);
+            if($json !== null) {
+                $data['json'] = $_POST['json'];
+                if(\quizzbox\model\categorie::where('id', '=', $json->quizz->id_categorie)->count() == 1) {
+                    $quizz = new \quizzbox\model\quizz();
+                    $quizz->nom = $json->quizz->nom;
+                    $quizz->id_categorie = $json->quizz->id_categorie;
+                    $factory = new \RandomLib\Factory;
+                    $generator = $factory->getGenerator(new \SecurityLib\Strength(\SecurityLib\Strength::MEDIUM));
+                    $quizz->tokenWeb = $generator->generateString(32, 'abcdefghijklmnopqrstuvwxyz0123456789');
+                    $quizz->save();
+
+                    foreach($json->questions as $q) {
+                        $question = new \quizzbox\model\question();
+                        $question->enonce = $q->enonce;
+                        $question->coefficient = $q->coefficient;
+                        $question->id_quizz = $quizz->id;
+                        $question->save();
+
+                        foreach($q->reponses as $r) {
+                            $reponse = new \quizzbox\model\reponse();
+                            $reponse->nom = $r->nom;
+                            $reponse->estSolution = $r->estSolution;
+                            $reponse->id_question = $question->id;
+                            $reponse->id_quizz = $quizz->id;
+                            $reponse->save();
+                        }
+                    }
+                    $args['id'] = $quizz->id_categorie;
+                    return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
+                }
+            }
+        }
+        // S'il y a un problème avec le JSON envoyé, on affiche à nouveau le formulaire
 		return (new \quizzbox\view\quizzboxview($data))->render('creer', $req, $resp, $args);
     }
 
@@ -467,7 +512,7 @@ class quizzboxcontrol
 			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 		}
 	}
-	
+
 	public function afficherCategoriesJSON(Request $req, Response $resp, $args)
 	{
 		$categories = \quizzbox\model\categorie::orderBy('nom')->get()->toJson();
