@@ -304,20 +304,20 @@ class quizzboxcontrol
 		$id = filter_var($args['id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // ID = Token
 		if(\quizzbox\model\quizz::where('tokenWeb', $id)->get()->toJson() != "[]")
 		{
-			$quizz = \quizzbox\model\quizz::where('tokenWeb', $id)->get();
-			$idQuizz = $quizz[0]->id;
+			$quizz = \quizzbox\model\quizz::where('tokenWeb', $id)->first();
+			$idQuizz = $quizz->id;
 			$questions = \quizzbox\model\question::where('id_quizz', $idQuizz)->get();
 
 			$jsonQuestion = '[ ';
 			foreach($questions as $uneQuestion)
 			{
-				$jsonQuestion .= '{ "id" : '.$uneQuestion->id.' , "enonce" : "'.str_replace('"', '\"', $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
+				$jsonQuestion .= '{ "enonce" : "'.str_replace('"', '\"', $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
 
 				$reponses = \quizzbox\model\reponse::where('id_quizz', $idQuizz)->where('id_question', $uneQuestion->id)->get();
 				$i = 1;
 				foreach($reponses as $uneReponse)
 				{
-					$jsonQuestion .= ' { "id" : '.$uneReponse->id.' , "nom" : "'.str_replace("'", "\'", $uneReponse->nom).'" , "estSolution" : '.$uneReponse->estSolution.' } ';
+					$jsonQuestion .= ' { "nom" : "'.str_replace("'", "\'", $uneReponse->nom).'" , "estSolution" : '.$uneReponse->estSolution.' } ';
 					if($i != count($reponses))
 					{
 						$jsonQuestion .= ', ';
@@ -328,10 +328,7 @@ class quizzboxcontrol
 			}
 			$jsonQuestion .= ' ] }';
 
-			$jsonQuizz = $quizz->toJson();
-			$jsonQuizz = substr($jsonQuizz, 0, -1);
-			$jsonQuizz = substr($jsonQuizz, 1);
-			$jsonQuizz = substr($jsonQuizz, 0, -1);
+			$jsonQuizz = '{ "nom" : "'.str_replace('"', '\"', $quizz->nom).'" , "tokenWeb" : "'.$quizz->tokenWeb.'"';
 
 			$json = '{ "quizz" : '.$jsonQuizz.' , "questions" : '.$jsonQuestion.' }';
 			return $json;
