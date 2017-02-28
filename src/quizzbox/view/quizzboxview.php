@@ -483,6 +483,7 @@ EOT;
 	private function modifierQuizz($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
+		<div id="Quizzmsg"></div>
 		<form method="post" id="formulaire" action="{$this->baseURL}/modifierQuizz/{$args['id']}">
 			<input type="hidden" name="json" id="json" />
 			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" id="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
@@ -514,6 +515,7 @@ EOT;
 	private function creer($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
+		Un quizz doit comporter au moins 1 question et 2 réponses et chaque question doit avoir au moins une réponse de juste.
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
 			<input type="hidden" name="json" id="json" />
 			<p><label for="nom">Nom du quizz :</label> <input type="text" id="nom" name="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
@@ -528,7 +530,7 @@ EOT;
 			</select></p>
 			<hr />
 			<h3>Questions</h3>
-
+			<div id="Quizzmsg"></div>
 			<div id="questions">
 			</div>
 
