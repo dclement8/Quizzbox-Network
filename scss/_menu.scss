@@ -1,0 +1,51 @@
+.navbar
+{
+    font-size:0;
+    background-color:#333;
+    min-height:50px;
+    list-style-type: none;
+    padding:0px;
+
+    li
+    {
+        background-color:#666;
+        font-size:1rem;
+        display: inline-block;
+        height:50px;
+        line-height:50px;
+        text-align: center;
+        text-decoration: none;
+        list-style-type: none;
+
+        a
+        {
+            color: white;
+            text-decoration: none;
+            height: 50px;
+            width: 100%;
+            line-height: 50px;
+            padding: 15px;
+        }
+    }
+
+    li:hover:not(.active):not(.disabled)
+    {
+        background-color:#BBB;
+        a
+        {
+            color:black;
+            cursor:pointer;
+        }
+    }
+
+    .active
+    {
+        color:red;
+    }
+    
+    .disabled
+    {
+        color:#BBB;
+        cursor:not-allowed;
+    }
+}

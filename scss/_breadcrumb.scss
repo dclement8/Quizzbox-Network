@@ -1,0 +1,50 @@
+.breadcrumb
+{
+    font-size:0;
+    background-color:#AAA;
+    min-height:25px;
+    list-style-type: none;
+    padding:0px;
+    border-bottom-style:solid;
+    border-bottom-color:red;
+    border-bottom-width:4px;
+    li
+    {
+        font-size:1rem;
+        padding-left:15px;
+        padding-right:15px;
+        display: inline-block;
+        height:25px;
+        line-height:25px;
+        text-align: center;
+
+        a
+        {
+            color:#222;
+            list-style-type: none;
+            text-decoration: none;
+        }
+    }
+    li:not(:last-child)::after
+    {
+        content:" > ";
+        color:red;
+    }
+    li:not(:last-child):hover
+    {
+        a
+        {
+            color:black;
+            text-decoration:underline;
+            cursor:pointer;
+        }
+    }
+    li:last-child
+    {
+        a
+        {
+            color:red;
+            font-weight: bold;
+        }
+    }
+}
