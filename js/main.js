@@ -1,7 +1,12 @@
+var htmlEntities = function(str) {
+	return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+};
+
 var quizz = (function() {
     // Functions nécessaires à la création/modification d'un quizz
 
     var $quizz = document.querySelector("#questions");
+    var Quizzmsg = document.querySelector("#Quizzmsg");
     var json = {
         "quizz": {
             "nom": "Quizz",
@@ -105,6 +110,43 @@ var quizz = (function() {
             json.questions[question-1].reponses[reponse-1].estSolution = !(json.questions[question-1].reponses[reponse-1].estSolution);
         },
 
+        verifierContenu: function() {
+            Quizzmsg.innerHTML = '';
+            var k;
+            for(var i=0; i < json.questions.length; i++) {
+                if(json.questions[i].enonce == '' || json.questions[i].enonce === undefined) {
+                    Quizzmsg.innerHTML += 'L\'énoncé de la question '+ (i+1) +' est vide.<br />';
+                    continue;
+                }
+                if(json.questions[i].reponses.length === undefined) {
+                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter des réponses.<br />';
+                    continue;
+                }
+                k = false;
+                for(var j=0; j < json.questions[i].reponses.length; j++) {
+                    if(json.questions[i].reponses[j].nom == '' || json.questions[i].reponses[j].nom === undefined) {
+                        Quizzmsg.innerHTML += 'La réponse '+ (j+1) +' de la question '+ (i+1) +' est vide.<br />';
+                        continue;
+                    }
+                    if(json.questions[i].reponses[j].estSolution == 1) {
+                        k = true;
+                    }
+                }
+                if(json.questions[i].reponses.length < 2) {
+                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter au moins 2 réponses.<br />';
+                    continue;
+                }
+                if(k === false) {
+                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter au moins une réponse juste.<br />';
+                    continue;
+                }
+            }
+            if(Quizzmsg.innerHTML == '') {
+                return true;
+            }
+            return false;
+        },
+
         generer: function(data = null) {
             // Génère le formulaire de questions/réponses à partir du JSON
             var tab = '';
@@ -144,8 +186,16 @@ var quizz = (function() {
         },
 
         envoyer: function() {
-            if(json.quizz.id_categorie == '' || json.quizz.id_categorie == 0 || json.quizz.id_categorie === undefined) {
+            if((json.questions[0].enonce == '' || json.questions[0].enonce === undefined) ||
+                (json.questions[0].reponses[0] == '' || json.questions[0].reponses[0] === undefined) ||
+                (json.questions[0].reponses[1] == '' || json.questions[0].reponses[1] === undefined)) {
+                alert('Votre quizz doit comporter au moins 1 question et 2 réponses');
+            }
+            else if(json.quizz.id_categorie == '' || json.quizz.id_categorie == 0 || json.quizz.id_categorie === undefined) {
                 alert('Veuillez choisir une catégorie !');
+            }
+            else if(!(quizz.verifierContenu())) {
+                alert('Votre quizz comporte des erreurs !');
             }
             else {
                 document.querySelector("#json").value = JSON.stringify(quizz.getJSON());

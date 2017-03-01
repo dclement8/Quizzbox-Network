@@ -195,6 +195,57 @@ class quizzboxcontrol
         $data['json'] = '';
         $data['categories'] = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
 
+        /*
+        verifierContenu: function() {
+            Quizzmsg.innerHTML = '';
+            var k;
+            for(var i=0; i < json.questions.length; i++) {
+                if(json.questions[i].enonce == '' || json.questions[i].enonce === undefined) {
+                    Quizzmsg.innerHTML += 'L\'énoncé de la question '+ (i+1) +' est vide.<br />';
+                    continue;
+                }
+                if(json.questions[i].reponses.length === undefined) {
+                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter des réponses.<br />';
+                    continue;
+                }
+                k = false;
+                for(var j=0; j < json.questions[i].reponses.length; j++) {
+                    if(json.questions[i].reponses[j].nom == '' || json.questions[i].reponses[j].nom === undefined) {
+                        Quizzmsg.innerHTML += 'La réponse '+ (j+1) +' de la question '+ (i+1) +' est vide.<br />';
+                        continue;
+                    }
+                    if(json.questions[i].reponses[j].estSolution == 1) {
+                        k = true;
+                    }
+                }
+                if(json.questions[i].reponses.length < 2) {
+                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter au moins 2 réponses.<br />';
+                    continue;
+                }
+                if(k === false) {
+                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter au moins une réponse juste.<br />';
+                    continue;
+                }
+            }
+            if(Quizzmsg.innerHTML == '') {
+                return true;
+            }
+            return false;
+        },
+
+        if((json.questions[0].enonce == '' || json.questions[0].enonce === undefined) ||
+            (json.questions[0].reponses[0] == '' || json.questions[0].reponses[0] === undefined) ||
+            (json.questions[0].reponses[1] == '' || json.questions[0].reponses[1] === undefined)) {
+            alert('Votre quizz doit comporter au moins 1 question et 2 réponses');
+        }
+        else if(json.quizz.id_categorie == '' || json.quizz.id_categorie == 0 || json.quizz.id_categorie === undefined) {
+            alert('Veuillez choisir une catégorie !');
+        }
+        else if(!(quizz.verifierContenu())) {
+            alert('Votre quizz comporte des erreurs !');
+        }
+        */
+
         if(isset($_POST['json'])) {
             $json = json_decode($_POST['json']);
             if($json !== null) {
@@ -437,10 +488,10 @@ class quizzboxcontrol
 								if(password_verify($authentification[1], $lejoueur->motdepasse))
 								{
 									// Authentification réussie !
-									
+
 									// Vérifier si le joueur n'a pas déjà joué au quizz
 									$idQuizz = \quizzbox\model\quizz::where('tokenWeb', $args['id'])->first()->id;
-									
+
 									if(\quizzbox\model\joueur::where('pseudo', $authentification[0])->scores()->where("id_quizz", $idQuizz)->count() > 0)
 									{
 										$quizz = \quizzbox\model\quizz::where('tokenWeb', $token)->first();
@@ -550,13 +601,13 @@ class quizzboxcontrol
 	public function afficherQuizzJSON(Request $req, Response $resp, $args)
 	{
 		// Retourne [] si vide ou n'existe pas.
-		
+
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
 		$quizz = \quizzbox\model\quizz::where('id_categorie', $id)->orderBy('nom')->get()->toJson();
 
 		return (new \quizzbox\view\quizzboxview($quizz))->afficherQuizzJSON($req, $resp, $args);
     }
-	
+
 	public function getNbQuestionsQuizz(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
