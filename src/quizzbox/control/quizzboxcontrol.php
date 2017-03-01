@@ -613,4 +613,20 @@ class quizzboxcontrol
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
 		echo \quizzbox\model\question::where('id_quizz', $id)->count();
 	}
+	
+	public function creerCategorieForm(Request $req, Response $resp, $args)
+	{
+		return (new \quizzbox\view\quizzboxview(null))->render('creerCategorieForm', $req, $resp, $args);
+	}
+	
+	public function creerCategorie(Request $req, Response $resp, $args)
+	{
+		$categorie = new \quizzbox\model\categorie();
+		$categorie->nom = filter_var($_POST["categorieForm"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		$categorie->description = filter_var($_POST["descriptionForm"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+		$categorie->save();
+		
+		$_SESSION["message"] = 'La catégorie a été crée !';
+		return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+	}
 }

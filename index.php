@@ -44,6 +44,14 @@ $app->get('/categories', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
 })->setName('afficherCategories');
 
+$app->get('/categories/creer', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->creerCategorieForm($req, $resp, $args);
+})->setName('creerCategorieForm')->add(new quizzbox\utils\authentificationAdmin());
+
+$app->post('/categories/creer', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->creerCategorie($req, $resp, $args);
+})->setName('creerCategorie')->add(new quizzbox\utils\authentificationAdmin());
+
 $app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
 })->setName('afficherQuizz');

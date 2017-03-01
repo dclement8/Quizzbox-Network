@@ -45,6 +45,15 @@ class quizzboxview
 					</li>
 				";
 			}
+			else
+			{
+				$html .= "
+					<li>
+						<a href='".$this->baseURL."/categories/creer'>Créer une catégorie</a>
+					</li>
+				";
+			}
+			
 			$html .= "
 				<li>
 					<a href='".$this->baseURL."/creer'>Créer un quizz</a>
@@ -605,6 +614,21 @@ EOT;
 
 		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($this->data);
 		return $resp;
+	}
+	
+	private function creerCategorieForm($req, $resp, $args)
+	{
+		$html = "
+			<form name='post' action='".$this->baseURL."/categories/creer' method='post'>
+				<label for='categorieForm'>Nom de catégorie</label>
+				<input type='text' id='categorieForm' name='categorieForm' placeholder='Nom de catégorie' required />
+				<label for='descriptionForm'>Description </label>
+				<input type='text' id='descriptionForm' name='descriptionForm' placeholder='Description de la catégorie' required />
+				<button type='submit'>Créer la catégorie</button>
+			</form>
+		";
+		
+		return $html;
 	}
 
 
