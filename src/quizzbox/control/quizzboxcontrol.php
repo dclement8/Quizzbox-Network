@@ -439,13 +439,28 @@ class quizzboxcontrol
 									// Authentification réussie !
 									
 									// Vérifier si le joueur n'a pas déjà joué au quizz
-									$idQuizz = \quizzbox\model\quizz::where('tokenWeb', $id)->first()->id;
+									$idQuizz = \quizzbox\model\quizz::where('tokenWeb', $args['id'])->first()->id;
 									
 									if(\quizzbox\model\joueur::where('pseudo', $authentification[0])->scores()->where("id_quizz", $idQuizz)->count() > 0)
 									{
-										$scores = \quizzbox\model\quizz::where('tokenWeb', $id)->scores()->where("id_joueur", $lejoueur->id)->first();
-										$scores->pivot->score = $score;
-										$scores->save();
+										$quizz = \quizzbox\model\quizz::where('tokenWeb', $token)->first();
+			
+										$config = parse_ini_file("conf/config.ini");
+										$dsn = "mysql:host=".$config["host"].";dbname=".$config["database"];
+										$db = new \PDO($dsn, $config["username"], $config["password"]);
+										$db->query("SET CHARACTER SET utf8");
+										
+										$insert = "INSERT INTO scores VALUES(:score, CURRENT_DATE(), NULL, :joueur, :quizz)";
+										$insert_prep = $db->prepare($insert);
+										
+										$idJoueur = $lejoueur->id;
+										$idQuizz = $quizz->id;
+										
+										$insert_prep->bindParam(':score', $score, \PDO::PARAM_INT);
+										$insert_prep->bindParam(':joueur', $idJoueur, \PDO::PARAM_INT);
+										$insert_prep->bindParam(':quizz', $idQuizz, \PDO::PARAM_INT);
+										
+										$insert_prep->execute();
 
 										$arr = array('success' => 'Score ajouté avec succès.');
 										$resp = $resp->withStatus(201);
