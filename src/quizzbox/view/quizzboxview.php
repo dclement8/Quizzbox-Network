@@ -53,7 +53,7 @@ class quizzboxview
 					</li>
 				";
 			}
-			
+
 			$html .= "
 				<li>
 					<a href='".$this->baseURL."/creer'>Créer un quizz</a>
@@ -265,7 +265,7 @@ class quizzboxview
 				{
 					$html .= "
 							<li>
-								<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
+								<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
 									<button type='submit'>Modifier le quizz</button>
 								</form>
 							</li>
@@ -282,7 +282,7 @@ class quizzboxview
 					{
 						$html .= "
 								<li>
-									<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
+									<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
 										<button type='submit'>Modifier le quizz</button>
 									</form>
 								</li>
@@ -461,7 +461,7 @@ class quizzboxview
 					<b>Niveau moyen du joueur : </b>".$niveauJoueur."
 				</li>
 		";
-		
+
 		if($idCategoriePlusJouee != 0)
 		{
 			$html .= "
@@ -475,7 +475,7 @@ class quizzboxview
 				</li>
 			";
 		}
-		
+
 		// Supprimer l'utilisateur
 		if(isset($_SESSION["login"]))
 		{
@@ -489,13 +489,13 @@ class quizzboxview
 				</li>";
 			}
 		}
-		
+
 		$html .= "
 			<li>
 				<h2>Quizz créés par ".$this->data->pseudo." :</h2>
 				<ul>
 		";
-		
+
 		$quizzCrees = \quizzbox\model\quizz::where("id_joueur", $this->data->id)->get();
 		foreach($quizzCrees as $unQuizz)
 		{
@@ -503,13 +503,13 @@ class quizzboxview
 				<li>
 					<a href='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>".$unQuizz->nom."</a>
 			";
-			
+
 			if(isset($_SESSION["login"]))
 			{
 				if($_SESSION["login"] == $this->data->id)
 				{
 					$html .= "
-						<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
+						<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
 							<button type='submit'>Modifier le quizz</button>
 						</form>
 						<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
@@ -518,12 +518,12 @@ class quizzboxview
 					";
 				}
 			}
-			
+
 			$html .= "
 				</li>
 			";
 		}
-		
+
 		$html .= "
 				</ul>
 			</li>
@@ -692,13 +692,13 @@ EOT;
 		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($this->data);
 		return $resp;
 	}
-	
+
 	public function nbQuizzCategoriesJSON($req, $resp, $args)
 	{
 		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($this->data);
 		return $resp;
 	}
-	
+
 	private function creerCategorieForm($req, $resp, $args)
 	{
 		$html = "
@@ -710,7 +710,7 @@ EOT;
 				<button type='submit'>Créer la catégorie</button>
 			</form>
 		";
-		
+
 		return $html;
 	}
 

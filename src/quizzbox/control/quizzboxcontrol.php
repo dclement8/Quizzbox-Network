@@ -134,7 +134,7 @@ class quizzboxcontrol
         if(!empty($args['pseudo']) && !empty($args['email']) && !empty($mdp) && !empty($mdpconfirm)) {
             if(strlen($args['pseudo']) > 2) {
                 if(strlen($args['pseudo']) < 256) {
-					if(!strstr($args['pseudo'], " ")) { 
+					if(!strstr($args['pseudo'], " ")) {
 						if(!strstr($args['pseudo'], "@")) {
 							if(!strstr($mdp, "@")) {
 								if(strlen($args['email']) > 5) {
@@ -152,9 +152,9 @@ class quizzboxcontrol
 															$user->email = $args['email'];
 															$user->dateInscription = date("Y-m-d H:i:s");
 															$user->save();
-															
+
 															$_SESSION["message"] = 'Inscription effectuée';
-															
+
 															return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 														}
 														else
@@ -210,92 +210,70 @@ class quizzboxcontrol
         $data['json'] = '';
         $data['categories'] = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
 
-        /*
-        verifierContenu: function() {
-            Quizzmsg.innerHTML = '';
-            var k;
-            for(var i=0; i < json.questions.length; i++) {
-                if(json.questions[i].enonce == '' || json.questions[i].enonce === undefined) {
-                    Quizzmsg.innerHTML += 'L\'énoncé de la question '+ (i+1) +' est vide.<br />';
-                    continue;
+        function verifierContenu($json) {
+            if((!isset($json->questions[0]->enonce) || $json->questions[0]->enonce == '') ||
+                (!isset($json->questions[0]->reponses[0]) || $json->questions[0]->reponses[0] == '') ||
+                (!isset($json->questions[0]->reponses[1]) || $json->questions[0]->reponses[1] == '') ||
+                !isset($json->quizz->id_categorie) || $json->quizz->id_categorie == 0 || $json->quizz->id_categorie == '') {
+                    return false;
+            }
+            for($i=0; $i < count($json->questions); $i++) {
+                if(!isset($json->questions[$i]->enonce) || $json->questions[$i]->enonce == '' || !isset($json->questions[$i]->reponses)) {
+                    return false;
                 }
-                if(json.questions[i].reponses.length === undefined) {
-                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter des réponses.<br />';
-                    continue;
-                }
-                k = false;
-                for(var j=0; j < json.questions[i].reponses.length; j++) {
-                    if(json.questions[i].reponses[j].nom == '' || json.questions[i].reponses[j].nom === undefined) {
-                        Quizzmsg.innerHTML += 'La réponse '+ (j+1) +' de la question '+ (i+1) +' est vide.<br />';
-                        continue;
+                $k = false;
+                for($j=0; $j < count($json->questions[$i]->reponses); $j++) {
+                    if(!isset($json->questions[$i]->reponses[$j]->nom) || $json->questions[$i]->reponses[$j]->nom == '') {
+                        return false;
                     }
-                    if(json.questions[i].reponses[j].estSolution == 1) {
-                        k = true;
+                    if($json->questions[$i]->reponses[$j]->estSolution == 1) {
+                        $k = true;
                     }
                 }
-                if(json.questions[i].reponses.length < 2) {
-                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter au moins 2 réponses.<br />';
-                    continue;
-                }
-                if(k === false) {
-                    Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter au moins une réponse juste.<br />';
-                    continue;
+                if(count($json->questions[$i]->reponses) < 2 || !$k) {
+                    return false;
                 }
             }
-            if(Quizzmsg.innerHTML == '') {
-                return true;
-            }
-            return false;
-        },
-
-        if((json.questions[0].enonce == '' || json.questions[0].enonce === undefined) ||
-            (json.questions[0].reponses[0] == '' || json.questions[0].reponses[0] === undefined) ||
-            (json.questions[0].reponses[1] == '' || json.questions[0].reponses[1] === undefined)) {
-            alert('Votre quizz doit comporter au moins 1 question et 2 réponses');
+            return true;
         }
-        else if(json.quizz.id_categorie == '' || json.quizz.id_categorie == 0 || json.quizz.id_categorie === undefined) {
-            alert('Veuillez choisir une catégorie !');
-        }
-        else if(!(quizz.verifierContenu())) {
-            alert('Votre quizz comporte des erreurs !');
-        }
-        */
 
         if(isset($_POST['json'])) {
             $json = json_decode($_POST['json']);
             if($json !== null) {
                 $data['json'] = $_POST['json'];
                 if(\quizzbox\model\categorie::where('id', '=', $json->quizz->id_categorie)->count() == 1) {
-                    $quizz = new \quizzbox\model\quizz();
-                    $quizz->nom = $json->quizz->nom;
-                    $quizz->id_categorie = $json->quizz->id_categorie;
-					if($_SESSION["login"] != "admin")
-					{
-						$quizz->id_joueur = $_SESSION["login"];
-					}
-                    $factory = new \RandomLib\Factory;
-                    $generator = $factory->getGenerator(new \SecurityLib\Strength(\SecurityLib\Strength::MEDIUM));
-                    $quizz->tokenWeb = $generator->generateString(32, 'abcdefghijklmnopqrstuvwxyz0123456789');
-                    $quizz->save();
+                    if(verifierContenu($json)) {
+                        $quizz = new \quizzbox\model\quizz();
+                        $quizz->nom = $json->quizz->nom;
+                        $quizz->id_categorie = $json->quizz->id_categorie;
+    					if($_SESSION["login"] != "admin")
+    					{
+    						$quizz->id_joueur = $_SESSION["login"];
+    					}
+                        $factory = new \RandomLib\Factory;
+                        $generator = $factory->getGenerator(new \SecurityLib\Strength(\SecurityLib\Strength::MEDIUM));
+                        $quizz->tokenWeb = $generator->generateString(32, 'abcdefghijklmnopqrstuvwxyz0123456789');
+                        $quizz->save();
 
-                    foreach($json->questions as $q) {
-                        $question = new \quizzbox\model\question();
-                        $question->enonce = $q->enonce;
-                        $question->coefficient = $q->coefficient;
-                        $question->id_quizz = $quizz->id;
-                        $question->save();
+                        foreach($json->questions as $q) {
+                            $question = new \quizzbox\model\question();
+                            $question->enonce = $q->enonce;
+                            $question->coefficient = $q->coefficient;
+                            $question->id_quizz = $quizz->id;
+                            $question->save();
 
-                        foreach($q->reponses as $r) {
-                            $reponse = new \quizzbox\model\reponse();
-                            $reponse->nom = $r->nom;
-                            $reponse->estSolution = $r->estSolution;
-                            $reponse->id_question = $question->id;
-                            $reponse->id_quizz = $quizz->id;
-                            $reponse->save();
+                            foreach($q->reponses as $r) {
+                                $reponse = new \quizzbox\model\reponse();
+                                $reponse->nom = $r->nom;
+                                $reponse->estSolution = $r->estSolution;
+                                $reponse->id_question = $question->id;
+                                $reponse->id_quizz = $quizz->id;
+                                $reponse->save();
+                            }
                         }
+                        $args['id'] = $quizz->id_categorie;
+                        return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
                     }
-                    $args['id'] = $quizz->id_categorie;
-                    return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
                 }
             }
         }
@@ -408,7 +386,7 @@ class quizzboxcontrol
 					$i++;
 				}
 				$jsonQuestion .= ' ] } ';
-				
+
 				$compteur++;
 				if($compteur != count($questions))
 				{
@@ -536,16 +514,16 @@ class quizzboxcontrol
 										$dsn = "mysql:host=".$config["host"].";dbname=".$config["database"];
 										$db = new \PDO($dsn, $config["username"], $config["password"]);
 										$db->query("SET CHARACTER SET utf8");
-										
+
 										$insert = "INSERT INTO scores VALUES(:score, NOW(), NULL, :joueur, :quizz)";
 										$insert_prep = $db->prepare($insert);
-										
+
 										$idJoueur = $lejoueur->id;
-										
+
 										$insert_prep->bindParam(':score', $score, \PDO::PARAM_INT);
 										$insert_prep->bindParam(':joueur', $idJoueur, \PDO::PARAM_INT);
 										$insert_prep->bindParam(':quizz', $idQuizz, \PDO::PARAM_INT);
-										
+
 										$insert_prep->execute();
 
 										$arr = array('success' => 'Score ajouté avec succès.');
@@ -632,11 +610,11 @@ class quizzboxcontrol
 
 		return (new \quizzbox\view\quizzboxview($categories))->afficherCategoriesJSON($req, $resp, $args);
     }
-	
+
 	public function nbQuizzCategoriesJSON(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
-		
+
 		return (new \quizzbox\view\quizzboxview(\quizzbox\model\quizz::where('id_categorie', $id)->count()))->afficherCategoriesJSON($req, $resp, $args);
 	}
 
@@ -655,19 +633,19 @@ class quizzboxcontrol
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
 		echo \quizzbox\model\question::where('id_quizz', $id)->count();
 	}
-	
+
 	public function creerCategorieForm(Request $req, Response $resp, $args)
 	{
 		return (new \quizzbox\view\quizzboxview(null))->render('creerCategorieForm', $req, $resp, $args);
 	}
-	
+
 	public function creerCategorie(Request $req, Response $resp, $args)
 	{
 		$categorie = new \quizzbox\model\categorie();
 		$categorie->nom = filter_var($_POST["categorieForm"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$categorie->description = filter_var($_POST["descriptionForm"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		$categorie->save();
-		
+
 		$_SESSION["message"] = 'La catégorie a été crée !';
 		return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 	}

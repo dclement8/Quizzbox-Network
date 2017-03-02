@@ -2,6 +2,10 @@ var htmlEntities = function(str) {
 	return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 };
 
+var isNumeric = function(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
 var quizz = (function() {
     // Functions nécessaires à la création/modification d'un quizz
 
@@ -99,7 +103,10 @@ var quizz = (function() {
         },
 
         updateCoefficient: function(question, value) {
-            json.questions[question-1].coefficient = value;
+			value = parseInt(value);
+			if(isNumeric(value)) {
+            	json.questions[question-1].coefficient = value;
+			}
         },
 
         updateReponse: function(question, reponse, value) {
@@ -162,12 +169,12 @@ var quizz = (function() {
 
             for(var i=1; i <= json.questions.length; i++) {
                 tab += '<table id="question_'+i+'">';
-                tab += '<tr><td>Question n°'+i+' : <input type="text" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.questions[i - 1].enonce+'" /></td>';
-                tab += '<td>coefficient <input type="number" value="1" min="1" max="5" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.questions[i - 1].coefficient+'" /></td></tr>';
+                tab += '<tr><td>Question n°'+i+' : <input type="text" onchange="quizz.updateEnonce('+i+', this.value)" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.questions[i - 1].enonce+'" /></td>';
+                tab += '<td>coefficient <input type="number" min="1" max="5" onchange="quizz.updateCoefficient('+i+', this.value)" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.questions[i - 1].coefficient+'" /></td></tr>';
 
                 // Réponses
                 for(var j=1; j <= json.questions[i - 1].reponses.length; j++) {
-                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.questions[i - 1].reponses[j - 1].nom+'" /></td>';
+                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onchange="quizz.updateReponse('+i+', '+j+', this.value)" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.questions[i - 1].reponses[j - 1].nom+'" /></td>';
                     tab += '<td>est solution ? <input type="checkbox" onclick="quizz.updateSolution('+i+', '+j+')"';
                     if(json.questions[i-1].reponses[j-1].estSolution) tab += ' checked';
                     tab += ' />';
