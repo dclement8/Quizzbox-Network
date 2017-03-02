@@ -502,12 +502,24 @@ class quizzboxview
 			$html .= "
 				<li>
 					<a href='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>".$unQuizz->nom."</a>
-					<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
-						<button type='submit'>Modifier le quizz</button>
-					</form>
-					<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
-						<button type='submit'>Supprimer le quizz</button>
-					</form>
+			";
+			
+			if(isset($_SESSION["login"]))
+			{
+				if($_SESSION["login"] == $this->data->id)
+				{
+					$html .= "
+						<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
+							<button type='submit'>Modifier le quizz</button>
+						</form>
+						<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
+							<button type='submit'>Supprimer le quizz</button>
+						</form>
+					";
+				}
+			}
+			
+			$html .= "
 				</li>
 			";
 		}
