@@ -40,6 +40,10 @@ $app->get('/categories/json', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->afficherCategoriesJSON($req, $resp, $args);
 })->setName('afficherCategoriesJSON');
 
+$app->get('/categories/{id}/nbQuizz', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->nbQuizzCategoriesJSON($req, $resp, $args);
+})->setName('nbQuizzCategoriesJSON');
+
 $app->get('/categories', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->afficherCategories($req, $resp, $args);
 })->setName('afficherCategories');

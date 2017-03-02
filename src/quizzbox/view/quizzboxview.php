@@ -616,6 +616,12 @@ EOT;
 		return $resp;
 	}
 	
+	public function nbQuizzCategoriesJSON($req, $resp, $args)
+	{
+		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($this->data);
+		return $resp;
+	}
+	
 	private function creerCategorieForm($req, $resp, $args)
 	{
 		$html = "

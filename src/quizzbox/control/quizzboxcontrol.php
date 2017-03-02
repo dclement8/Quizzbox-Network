@@ -594,6 +594,13 @@ class quizzboxcontrol
 
 		return (new \quizzbox\view\quizzboxview($categories))->afficherCategoriesJSON($req, $resp, $args);
     }
+	
+	public function nbQuizzCategoriesJSON(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		
+		return (new \quizzbox\view\quizzboxview(\quizzbox\model\quizz::where('id_categorie', $id)->count()))->afficherCategoriesJSON($req, $resp, $args);
+	}
 
 	public function afficherQuizzJSON(Request $req, Response $resp, $args)
 	{
