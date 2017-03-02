@@ -41,7 +41,7 @@ class quizzboxview
 			{
 				$html .= "
 					<li>
-						<a href='".$this->baseURL."/profil'>Profil</a>
+						<a href='".$this->baseURL."/profil/".$_SESSION["login"]."'>Profil</a>
 					</li>
 				";
 			}
@@ -289,7 +289,7 @@ class quizzboxview
 				$html .= "
 					<tr>
 						<td>".$position."</td>
-						<td>".\quizzbox\model\joueur::find($unScore->pivot->id_joueur)->first()->pseudo."</td>
+						<td><a href='".$this->baseURL."/profil/".$unScore->pivot->id_joueur."'>".\quizzbox\model\joueur::find($unScore->pivot->id_joueur)->pseudo."</a></td>
 						<td>".$unScore->pivot->score."</td>
 						<td>".$unScore->pivot->dateHeure."</td>
 					</tr>

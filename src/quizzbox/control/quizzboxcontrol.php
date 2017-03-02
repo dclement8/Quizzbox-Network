@@ -514,7 +514,7 @@ class quizzboxcontrol
 										$db = new \PDO($dsn, $config["username"], $config["password"]);
 										$db->query("SET CHARACTER SET utf8");
 										
-										$insert = "INSERT INTO scores VALUES(:score, CURRENT_DATE(), NULL, :joueur, :quizz)";
+										$insert = "INSERT INTO scores VALUES(:score, NOW(), NULL, :joueur, :quizz)";
 										$insert_prep = $db->prepare($insert);
 										
 										$idJoueur = $lejoueur->id;
