@@ -211,26 +211,26 @@ class quizzboxcontrol
         $data['categories'] = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
 
         function verifierContenu($json) {
-            if((!isset($json->questions[0]->enonce) || $json->questions[0]->enonce == '') ||
-                (!isset($json->questions[0]->reponses[0]) || $json->questions[0]->reponses[0] == '') ||
-                (!isset($json->questions[0]->reponses[1]) || $json->questions[0]->reponses[1] == '') ||
+            if((!isset($json->quizz->questions[0]->enonce) || $json->quizz->questions[0]->enonce == '') ||
+                (!isset($json->quizz->questions[0]->reponses[0]) || $json->quizz->questions[0]->reponses[0] == '') ||
+                (!isset($json->quizz->questions[0]->reponses[1]) || $json->quizz->questions[0]->reponses[1] == '') ||
                 !isset($json->quizz->id_categorie) || $json->quizz->id_categorie == 0 || $json->quizz->id_categorie == '') {
                     return false;
             }
-            for($i=0; $i < count($json->questions); $i++) {
-                if(!isset($json->questions[$i]->enonce) || $json->questions[$i]->enonce == '' || !isset($json->questions[$i]->reponses)) {
+            for($i=0; $i < count($json->quizz->questions); $i++) {
+                if(!isset($json->quizz->questions[$i]->enonce) || $json->quizz->questions[$i]->enonce == '' || !isset($json->quizz->questions[$i]->reponses)) {
                     return false;
                 }
                 $k = false;
-                for($j=0; $j < count($json->questions[$i]->reponses); $j++) {
-                    if(!isset($json->questions[$i]->reponses[$j]->nom) || $json->questions[$i]->reponses[$j]->nom == '') {
+                for($j=0; $j < count($json->quizz->questions[$i]->reponses); $j++) {
+                    if(!isset($json->quizz->questions[$i]->reponses[$j]->nom) || $json->quizz->questions[$i]->reponses[$j]->nom == '') {
                         return false;
                     }
-                    if($json->questions[$i]->reponses[$j]->estSolution == 1) {
+                    if($json->quizz->questions[$i]->reponses[$j]->estSolution == 1) {
                         $k = true;
                     }
                 }
-                if(count($json->questions[$i]->reponses) < 2 || !$k) {
+                if(count($json->quizz->questions[$i]->reponses) < 2 || !$k) {
                     return false;
                 }
             }
@@ -255,7 +255,7 @@ class quizzboxcontrol
                         $quizz->tokenWeb = $generator->generateString(32, 'abcdefghijklmnopqrstuvwxyz0123456789');
                         $quizz->save();
 
-                        foreach($json->questions as $q) {
+                        foreach($json->quizz->questions as $q) {
                             $question = new \quizzbox\model\question();
                             $question->enonce = $q->enonce;
                             $question->coefficient = $q->coefficient;

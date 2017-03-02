@@ -16,18 +16,18 @@ var quizz = (function() {
             "nom": "Quizz",
             "id_categorie": 0,
             "id": 0,
-            "tokenWeb": "0"
-        },
-        "questions": [
-            {
-                "id": 0,
-                "enonce": "",
-                "coefficient": 1,
-                "reponses": [
-                    {"id": 0, "nom": "", "estSolution": 0}
-                ]
-            }
-        ]
+            "tokenWeb": "0",
+			"questions": [
+	            {
+	                "id": 0,
+	                "enonce": "",
+	                "coefficient": 1,
+	                "reponses": [
+	                    {"id": 0, "nom": "", "estSolution": 0}
+	                ]
+	            }
+	        ]
+        }
     };
 
     /* pour les réponses : 0 = faux, 1 = vrai
@@ -37,31 +37,31 @@ var quizz = (function() {
                 "nom": "Bob",
                 "id_categorie": 1,
                 "id": 2,
-                "tokenWeb": "abc"
-            },
-            "questions": [
-                {
-                    "id": 1,
-                    "enonce": "Dans quelle ville se situe la plus grande cathédrale de France ?",
-                    "coefficient": 1,
-                    "reponses": [
-                        {"id": 1, "nom": "Rouen", "estSolution": 0},
-                        {"id": 2, "nom": "Amiens", "estSolution": 1},
-                        {"id": 3, "nom": "Strasbourg", "estSolution": 0}
-                    ]
-                },
-                {
-                    "id": 2,
-                    "enonce": "Quelle a été la première ville française libérée lors de la Seconde Guerre mondiale ?",
-                    "coefficient": 1,
-                    "reponses": [
-                        {"id": 4, "nom": "Bayeux", "estSolution": 0},
-                        {"id": 5, "nom": "Caen", "estSolution": 0},
-                        {"id": 6, "nom": "Marseille", "estSolution": 0},
-                        {"id": 7, "nom": "Ajaccio", "estSolution": 1}
-                    ]
-                }
-            ]
+                "tokenWeb": "abc",
+				"questions": [
+	                {
+	                    "id": 1,
+	                    "enonce": "Dans quelle ville se situe la plus grande cathédrale de France ?",
+	                    "coefficient": 1,
+	                    "reponses": [
+	                        {"id": 1, "nom": "Rouen", "estSolution": 0},
+	                        {"id": 2, "nom": "Amiens", "estSolution": 1},
+	                        {"id": 3, "nom": "Strasbourg", "estSolution": 0}
+	                    ]
+	                },
+	                {
+	                    "id": 2,
+	                    "enonce": "Quelle a été la première ville française libérée lors de la Seconde Guerre mondiale ?",
+	                    "coefficient": 1,
+	                    "reponses": [
+	                        {"id": 4, "nom": "Bayeux", "estSolution": 0},
+	                        {"id": 5, "nom": "Caen", "estSolution": 0},
+	                        {"id": 6, "nom": "Marseille", "estSolution": 0},
+	                        {"id": 7, "nom": "Ajaccio", "estSolution": 1}
+	                    ]
+	                }
+	            ]
+            }
         }
     */
 
@@ -71,22 +71,22 @@ var quizz = (function() {
         },
 
         ajouterQuestion: function() {
-            json.questions.push({"id":0,"enonce":"","coefficient":1,"reponses":[{"id":0,"nom": "", "estSolution": false}]});
+            json.quizz.questions.push({"id":0,"enonce":"","coefficient":1,"reponses":[{"id":0,"nom": "", "estSolution": false}]});
             quizz.generer();
         },
 
         ajouterReponse: function(question) {
-            json.questions[question-1].reponses.push({"id":0,"nom":"","estSolution":false});
+            json.quizz.questions[question-1].reponses.push({"id":0,"nom":"","estSolution":false});
             quizz.generer();
         },
 
         supprimerQuestion: function(question) {
-            json.questions.splice(question-1, 1);
+            json.quizz.questions.splice(question-1, 1);
             quizz.generer();
         },
 
         supprimerReponse: function(question, reponse) {
-            json.questions[question-1].reponses.splice(reponse-1, 1);
+            json.quizz.questions[question-1].reponses.splice(reponse-1, 1);
             quizz.generer();
         },
 
@@ -99,47 +99,47 @@ var quizz = (function() {
         },
 
         updateEnonce: function(question, value) {
-            json.questions[question-1].enonce = value;
+            json.quizz.questions[question-1].enonce = value;
         },
 
         updateCoefficient: function(question, value) {
 			value = parseInt(value);
 			if(isNumeric(value)) {
-            	json.questions[question-1].coefficient = value;
+            	json.quizz.questions[question-1].coefficient = value;
 			}
         },
 
         updateReponse: function(question, reponse, value) {
-            json.questions[question-1].reponses[reponse-1].nom = value;
+            json.quizz.questions[question-1].reponses[reponse-1].nom = value;
         },
 
         updateSolution: function(question, reponse) {
-            json.questions[question-1].reponses[reponse-1].estSolution = !(json.questions[question-1].reponses[reponse-1].estSolution);
+            json.quizz.questions[question-1].reponses[reponse-1].estSolution = !(json.quizz.questions[question-1].reponses[reponse-1].estSolution);
         },
 
         verifierContenu: function() {
             Quizzmsg.innerHTML = '';
             var k;
-            for(var i=0; i < json.questions.length; i++) {
-                if(json.questions[i].enonce == '' || json.questions[i].enonce === undefined) {
+            for(var i=0; i < json.quizz.questions.length; i++) {
+                if(json.quizz.questions[i].enonce == '' || json.quizz.questions[i].enonce === undefined) {
                     Quizzmsg.innerHTML += 'L\'énoncé de la question '+ (i+1) +' est vide.<br />';
                     continue;
                 }
-                if(json.questions[i].reponses.length === undefined) {
+                if(json.quizz.questions[i].reponses.length === undefined) {
                     Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter des réponses.<br />';
                     continue;
                 }
                 k = false;
-                for(var j=0; j < json.questions[i].reponses.length; j++) {
-                    if(json.questions[i].reponses[j].nom == '' || json.questions[i].reponses[j].nom === undefined) {
+                for(var j=0; j < json.quizz.questions[i].reponses.length; j++) {
+                    if(json.quizz.questions[i].reponses[j].nom == '' || json.quizz.questions[i].reponses[j].nom === undefined) {
                         Quizzmsg.innerHTML += 'La réponse '+ (j+1) +' de la question '+ (i+1) +' est vide.<br />';
                         continue;
                     }
-                    if(json.questions[i].reponses[j].estSolution == 1) {
+                    if(json.quizz.questions[i].reponses[j].estSolution == 1) {
                         k = true;
                     }
                 }
-                if(json.questions[i].reponses.length < 2) {
+                if(json.quizz.questions[i].reponses.length < 2) {
                     Quizzmsg.innerHTML += 'La question '+ (i+1) +' doit comporter au moins 2 réponses.<br />';
                     continue;
                 }
@@ -159,6 +159,7 @@ var quizz = (function() {
             var tab = '';
 
             if(data !== null) {
+				console.log(data);
                 json = data;
             }
 
@@ -167,16 +168,16 @@ var quizz = (function() {
             document.querySelector("#nom").value = json.quizz.nom;
             document.querySelector("#categorie").value = json.quizz.id_categorie;
 
-            for(var i=1; i <= json.questions.length; i++) {
+            for(var i=1; i <= json.quizz.questions.length; i++) {
                 tab += '<table id="question_'+i+'">';
-                tab += '<tr><td>Question n°'+i+' : <input type="text" onchange="quizz.updateEnonce('+i+', this.value)" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.questions[i - 1].enonce+'" /></td>';
-                tab += '<td>coefficient <input type="number" min="1" max="5" onchange="quizz.updateCoefficient('+i+', this.value)" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.questions[i - 1].coefficient+'" /></td></tr>';
+                tab += '<tr><td>Question n°'+i+' : <input type="text" onchange="quizz.updateEnonce('+i+', this.value)" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.quizz.questions[i - 1].enonce+'" /></td>';
+                tab += '<td>coefficient <input type="number" min="1" max="5" onchange="quizz.updateCoefficient('+i+', this.value)" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.quizz.questions[i - 1].coefficient+'" /></td></tr>';
 
                 // Réponses
-                for(var j=1; j <= json.questions[i - 1].reponses.length; j++) {
-                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onchange="quizz.updateReponse('+i+', '+j+', this.value)" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.questions[i - 1].reponses[j - 1].nom+'" /></td>';
+                for(var j=1; j <= json.quizz.questions[i - 1].reponses.length; j++) {
+                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onchange="quizz.updateReponse('+i+', '+j+', this.value)" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.quizz.questions[i - 1].reponses[j - 1].nom+'" /></td>';
                     tab += '<td>est solution ? <input type="checkbox" onclick="quizz.updateSolution('+i+', '+j+')"';
-                    if(json.questions[i-1].reponses[j-1].estSolution) tab += ' checked';
+                    if(json.quizz.questions[i-1].reponses[j-1].estSolution) tab += ' checked';
                     tab += ' />';
                     if(j > 1) tab += '<input type="button" value="X" onclick="quizz.supprimerReponse('+i+', '+j+')">';
                     tab += '</td></tr>';
@@ -193,9 +194,9 @@ var quizz = (function() {
         },
 
         envoyer: function() {
-            if((json.questions[0].enonce == '' || json.questions[0].enonce === undefined) ||
-                (json.questions[0].reponses[0] == '' || json.questions[0].reponses[0] === undefined) ||
-                (json.questions[0].reponses[1] == '' || json.questions[0].reponses[1] === undefined)) {
+            if((json.quizz.questions[0].enonce == '' || json.quizz.questions[0].enonce === undefined) ||
+                (json.quizz.questions[0].reponses[0] == '' || json.quizz.questions[0].reponses[0] === undefined) ||
+                (json.quizz.questions[0].reponses[1] == '' || json.quizz.questions[0].reponses[1] === undefined)) {
                 alert('Votre quizz doit comporter au moins 1 question et 2 réponses');
             }
             else if(json.quizz.id_categorie == '' || json.quizz.id_categorie == 0 || json.quizz.id_categorie === undefined) {
