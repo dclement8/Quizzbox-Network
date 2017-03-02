@@ -98,7 +98,7 @@ $app->get('/modifier/{id}', function (Request $req, Response $resp, $args) {
 
 $app->post('/quizz/{id}/supprimer', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->supprimerQuizz($req, $resp, $args);
-})->setName('supprimerQuizz')->add(new quizzbox\utils\authentificationAdmin());
+})->setName('supprimerQuizz')->add(new quizzbox\utils\authentification());
 
 $app->get('/profil/{id}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->afficherProfil($req, $resp, $args);

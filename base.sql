@@ -12,6 +12,7 @@ CREATE TABLE quizz(
         nom          Varchar (255) ,
         tokenWeb     Varchar (500) ,
         id_categorie Int ,
+		id_joueur Int ,
         PRIMARY KEY (id ) ,
         UNIQUE (tokenWeb )
 )ENGINE=InnoDB;
@@ -85,6 +86,7 @@ CREATE TABLE scores(
 )ENGINE=InnoDB;
 
 ALTER TABLE quizz ADD CONSTRAINT FK_quizz_id_categorie FOREIGN KEY (id_categorie) REFERENCES categorie(id);
+ALTER TABLE quizz ADD CONSTRAINT FK_quizz_id_joueur FOREIGN KEY (id_joueur) REFERENCES joueur(id);
 ALTER TABLE question ADD CONSTRAINT FK_question_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);
 ALTER TABLE reponse ADD CONSTRAINT FK_reponse_id_question FOREIGN KEY (id_question) REFERENCES question(id);
 ALTER TABLE reponse ADD CONSTRAINT FK_reponse_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);

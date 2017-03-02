@@ -242,6 +242,10 @@ class quizzboxview
 						<b>Détails :</b>
 						<ul>
 							<li>
+								<b>Créateur : </b>
+								<a href='".$this->baseURL."/profil/".$unQuizz->id_joueur."'>".\quizzbox\model\joueur::find($unQuizz->id_joueur)->pseudo."</a>
+							</li>
+							<li>
 								<b>Nombre de questions : </b>
 								".\quizzbox\model\question::where('id_quizz', $unQuizz->id)->count()."
 							</li>
@@ -261,11 +265,34 @@ class quizzboxview
 				{
 					$html .= "
 							<li>
+								<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
+									<button type='submit'>Modifier le quizz</button>
+								</form>
+							</li>
+							<li>
 								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
 									<button type='submit'>Supprimer le quizz</button>
 								</form>
 							</li>
 					";
+				}
+				else
+				{
+					if($_SESSION["login"] == $unQuizz->id_joueur)
+					{
+						$html .= "
+								<li>
+									<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
+										<button type='submit'>Modifier le quizz</button>
+									</form>
+								</li>
+								<li>
+									<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
+										<button type='submit'>Supprimer le quizz</button>
+									</form>
+								</li>
+						";
+					}
 				}
 			}
 
@@ -413,8 +440,10 @@ class quizzboxview
 				$idCategoriePlusJouee = $uneCategorie;
 			}
 		}
-		$categoriePredilection = \quizzbox\model\categorie::find($idCategoriePlusJouee)->first();
-
+		if($idCategoriePlusJouee != 0)
+		{
+			$categoriePredilection = \quizzbox\model\categorie::find($idCategoriePlusJouee)->first();
+		}
 
 
 		$html = "
@@ -431,13 +460,22 @@ class quizzboxview
 				<li>
 					<b>Niveau moyen du joueur : </b>".$niveauJoueur."
 				</li>
+		";
+		
+		if($idCategoriePlusJouee != 0)
+		{
+			$html .= "
 				<li>
 					<b>Dernier quizz joué : </b>".\quizzbox\model\quizz::find($scores[0]->pivot->id_quizz)->first()->nom.", <b>le :</b> ".$scores[0]->pivot->dateHeure."
 				</li>
+			";
+			$html .= "
 				<li>
 					<b>Domaine de prédilection : </b><a href='".$this->baseURL."/categories/".$categoriePredilection->id."'>".$categoriePredilection->nom."</a>
-				</li>";
-
+				</li>
+			";
+		}
+		
 		// Supprimer l'utilisateur
 		if(isset($_SESSION["login"]))
 		{
@@ -451,6 +489,33 @@ class quizzboxview
 				</li>";
 			}
 		}
+		
+		$html .= "
+			<li>
+				<h2>Quizz créés par ".$this->data->pseudo." :</h2>
+				<ul>
+		";
+		
+		$quizzCrees = \quizzbox\model\quizz::where("id_joueur", $this->data->id)->get();
+		foreach($quizzCrees as $unQuizz)
+		{
+			$html .= "
+				<li>
+					<a href='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>".$unQuizz->nom."</a>
+					<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->id."'>
+						<button type='submit'>Modifier le quizz</button>
+					</form>
+					<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
+						<button type='submit'>Supprimer le quizz</button>
+					</form>
+				</li>
+			";
+		}
+		
+		$html .= "
+				</ul>
+			</li>
+		";
 
 		$html .= "
 			</ul>

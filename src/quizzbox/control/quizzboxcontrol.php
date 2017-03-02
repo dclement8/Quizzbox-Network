@@ -269,6 +269,10 @@ class quizzboxcontrol
                     $quizz = new \quizzbox\model\quizz();
                     $quizz->nom = $json->quizz->nom;
                     $quizz->id_categorie = $json->quizz->id_categorie;
+					if($_SESSION["login"] != "admin")
+					{
+						$quizz->id_joueur = $_SESSION["login"];
+					}
                     $factory = new \RandomLib\Factory;
                     $generator = $factory->getGenerator(new \SecurityLib\Strength(\SecurityLib\Strength::MEDIUM));
                     $quizz->tokenWeb = $generator->generateString(32, 'abcdefghijklmnopqrstuvwxyz0123456789');
@@ -314,12 +318,16 @@ class quizzboxcontrol
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
 		if(\quizzbox\model\quizz::where('id', $id)->get()->toJson() != "[]")
 		{
-			\quizzbox\model\reponse::where('id_quizz', $id)->delete();
-			\quizzbox\model\question::where('id_quizz', $id)->delete();
-			\quizzbox\model\quizz::find($id)->scores()->detach();
-			\quizzbox\model\quizz::destroy($id);
+			$idJoueur = \quizzbox\model\quizz::where('id', $id)->first()->id_joueur;
+			if(($_SESSION["login"] == "admin") || ($_SESSION["login"] == $idJoueur))
+			{
+				\quizzbox\model\reponse::where('id_quizz', $id)->delete();
+				\quizzbox\model\question::where('id_quizz', $id)->delete();
+				\quizzbox\model\quizz::find($id)->scores()->detach();
+				\quizzbox\model\quizz::destroy($id);
 
-			$_SESSION["message"] = 'Quizz supprimé';
+				$_SESSION["message"] = 'Quizz supprimé';
+			}
 		}
 		else
 		{
@@ -336,6 +344,14 @@ class quizzboxcontrol
 		if(\quizzbox\model\joueur::where('id', $id)->get()->toJson() != "[]")
 		{
 			\quizzbox\model\joueur::find($id)->scores()->detach();
+			$lesQuizz = \quizzbox\model\quizz::where('id_joueur', $id)->get();
+			foreach($lesQuizz as $unQuizz)
+			{
+				\quizzbox\model\reponse::where('id_quizz', $unQuizz->id)->delete();
+				\quizzbox\model\question::where('id_quizz', $unQuizz->id)->delete();
+				\quizzbox\model\quizz::find($unQuizz->id)->scores()->detach();
+				\quizzbox\model\quizz::destroy($unQuizz->id);
+			}
 			\quizzbox\model\joueur::destroy($id);
 			$_SESSION["message"] = 'Joueur supprimé';
 		}
