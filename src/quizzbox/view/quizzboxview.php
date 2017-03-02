@@ -572,7 +572,7 @@ EOT;
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
 		<div id="Quizzmsg"></div>
-		<form method="post" id="formulaire" action="{$this->baseURL}/modifierQuizz/{$args['id']}">
+		<form method="post" id="formulaire" action="{$this->baseURL}/modifier/{$args['id']}">
 			<input type="hidden" name="json" id="json" />
 			<p><label for="nom">Nom du quizz :</label> <input type="text" name="nom" id="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
 			<p><label for="categorie">Catégorie :</label>
@@ -590,7 +590,7 @@ EOT;
 			<div id="questions">
 			</div>
 
-			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Créer" onclick="quizz.envoyer()" /></p>
+			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Modifier" onclick="quizz.envoyer()" /></p>
 		</form>
 		<script type="text/javascript">
 			/* Génération du formulaire au chargement */

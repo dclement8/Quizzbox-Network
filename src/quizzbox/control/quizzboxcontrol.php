@@ -291,6 +291,94 @@ class quizzboxcontrol
         }
     }
 
+    public function modifierTraitement(Request $req, Response $resp, $args)
+	{
+        // TODO sécuriser variables et vérifier données
+        $data['json'] = '';
+        $data['categories'] = \quizzbox\model\categorie::orderBy('nom', 'ASC')->get();
+
+        function verifierContenu($json) {
+            if((!isset($json->quizz->questions[0]->enonce) || $json->quizz->questions[0]->enonce == '') ||
+                (!isset($json->quizz->questions[0]->reponses[0]) || $json->quizz->questions[0]->reponses[0] == '') ||
+                (!isset($json->quizz->questions[0]->reponses[1]) || $json->quizz->questions[0]->reponses[1] == '') ||
+                !isset($json->quizz->id_categorie) || $json->quizz->id_categorie == 0 || $json->quizz->id_categorie == '') {
+                    return false;
+            }
+            for($i=0; $i < count($json->quizz->questions); $i++) {
+                if(!isset($json->quizz->questions[$i]->enonce) || $json->quizz->questions[$i]->enonce == '' || !isset($json->quizz->questions[$i]->reponses)) {
+                    return false;
+                }
+                $k = false;
+                for($j=0; $j < count($json->quizz->questions[$i]->reponses); $j++) {
+                    if(!isset($json->quizz->questions[$i]->reponses[$j]->nom) || $json->quizz->questions[$i]->reponses[$j]->nom == '') {
+                        return false;
+                    }
+                    if($json->quizz->questions[$i]->reponses[$j]->estSolution == 1) {
+                        $k = true;
+                    }
+                }
+                if(count($json->quizz->questions[$i]->reponses) < 2 || !$k) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        if(isset($_POST['json'])) {
+            $json = json_decode($_POST['json']);
+            if($json !== null) {
+                $data['json'] = $_POST['json'];
+                if(\quizzbox\model\categorie::where('id', '=', $json->quizz->id_categorie)->count() == 1 && \quizzbox\model\quizz::where('id', '=', $json->quizz->id)->count() == 1) {
+                    if(verifierContenu($json)) {
+                        $quizz = \quizzbox\model\quizz::find($json->quizz->id);
+                        $quizz->nom = $json->quizz->nom;
+                        $quizz->id_categorie = $json->quizz->id_categorie;
+    					if($_SESSION["login"] != "admin")
+    					{
+    						$quizz->id_joueur = $_SESSION["login"];
+    					}
+                        $quizz->save();
+
+                        foreach($json->quizz->questions as $q) {
+                            $question = \quizzbox\model\question::find($q->id);
+                            if($question === null) {
+                                $question = new \quizzbox\model\question();
+                            }
+                            elseif($question->id_quizz != $quizz->id) {
+                                // L'id ne correspond pas, on ne met pas cette question à jour
+                                continue;
+                            }
+                            $question->enonce = $q->enonce;
+                            $question->coefficient = $q->coefficient;
+                            $question->id_quizz = $quizz->id;
+                            $question->save();
+
+                            foreach($q->reponses as $r) {
+                                $reponse = \quizzbox\model\question::find($r->id);
+                                if($reponse === null) {
+                                    $reponse = new \quizzbox\model\reponse();
+                                }
+                                elseif($reponse->id_quizz != $quizz->id) {
+                                    // L'id ne correspond pas, on ne met pas cette réponse à jour
+                                    continue;
+                                }
+                                $reponse->nom = $r->nom;
+                                $reponse->estSolution = $r->estSolution;
+                                $reponse->id_question = $question->id;
+                                $reponse->id_quizz = $quizz->id;
+                                $reponse->save();
+                            }
+                        }
+                        $args['id'] = $quizz->id_categorie;
+                        return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
+                    }
+                }
+            }
+        }
+        // S'il y a un problème avec le JSON envoyé, on affiche à nouveau le formulaire
+		return (new \quizzbox\view\quizzboxview($data))->render('modifierQuizz', $req, $resp, $args);
+    }
+
 	public function supprimerQuizz(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
@@ -372,13 +460,22 @@ class quizzboxcontrol
 			$compteur = 0;
 			foreach($questions as $uneQuestion)
 			{
-				$jsonQuestion .= '{ "enonce" : "'.str_replace('"', '\"', $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
+				$jsonQuestion .= '{ "enonce" : "'.str_replace('"', '\"', $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient;
+                if(isset($args['without_headers'])) {
+                    $jsonQuestion .= ', "id": '.$uneQuestion->id;
+                }
+                $jsonQuestion .= ' , "reponses" : [ ';
 
 				$reponses = \quizzbox\model\reponse::where('id_quizz', $idQuizz)->where('id_question', $uneQuestion->id)->get();
 				$i = 1;
 				foreach($reponses as $uneReponse)
 				{
-					$jsonQuestion .= ' { "nom" : "'.str_replace('"', '\"', $uneReponse->nom).'" , "estSolution" : '.$uneReponse->estSolution.' } ';
+					$jsonQuestion .= ' { "nom" : "'.str_replace('"', '\"', $uneReponse->nom).'" , "estSolution" : '.$uneReponse->estSolution;
+                    if(isset($args['without_headers'])) {
+                        $jsonQuestion .= ', "id": '.$uneReponse->id;
+                    }
+                    $jsonQuestion .= ' } ';
+
 					if($i != count($reponses))
 					{
 						$jsonQuestion .= ', ';
@@ -396,6 +493,9 @@ class quizzboxcontrol
 			$jsonQuestion .= ' ] }';
 
 			$jsonQuizz = '{ "nom" : "'.str_replace('"', '\"', $quizz->nom).'" , "tokenWeb" : "'.$quizz->tokenWeb.'"';
+            if(isset($args['without_headers'])) {
+                $jsonQuizz .= ', "id": '.$quizz->id.', "id_categorie": '.$quizz->id_categorie;
+            }
 
 			$json = '{ "quizz" : '.$jsonQuizz.' , "questions" : '.$jsonQuestion.' }';
 			return $json;

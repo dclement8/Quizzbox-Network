@@ -208,7 +208,7 @@ var quizz = (function() {
             else {
                 document.querySelector("#json").value = JSON.stringify(quizz.getJSON());
 
-                if(confirm("Voulez-vous créer ce quizz ?")) {
+                if(confirm("Voulez-vous valider les modifications de ce quizz ?")) {
                     document.querySelector("#formulaire").submit();
                 }
             }
