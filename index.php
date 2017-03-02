@@ -23,6 +23,14 @@ $configuration = [
 $c = new\Slim\Container($configuration);
 $app = new \Slim\App($c);
 
+/*$corsOptions = array(
+    "origin" => "*",
+    "exposeHeaders" => array("Content-Type", "X-Requested-With", "X-authentication", "X-client"),
+    "allowMethods" => array('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS')
+);
+$cors = new \CorsSlim\CorsSlim($corsOptions);
+$app->add($cors);*/
+
 // -------------------
 
 /*$app->get('/',
@@ -116,7 +124,7 @@ $app->get('/quizz/{id}/download', function (Request $req, Response $resp, $args)
 	return (new quizzbox\control\quizzboxcontrol($this))->telechargerQuizz($req, $resp, $args);
 })->setName('telechargerQuizz');
 
-$app->put('/quizz/joueur/{joueur}/scores/{score}', function (Request $req, Response $resp, $args) {
+$app->post('/quizz/joueur/{joueur}/scores/{score}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->envoiScore($req, $resp, $args);
 })->setName('envoiScore');
 

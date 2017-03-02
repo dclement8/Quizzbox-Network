@@ -581,15 +581,15 @@ EOT;
 		if(is_array($this->data))
 		{
 			$json = json_encode($this->data);
-			$resp = $resp->withHeader('Content-Type', 'application/json');
+			$resp = $resp->withHeader('Content-Type', 'application/json')->withHeader('Access-Control-Allow-Origin', '*');
 		}
 		else
 		{
 			$json = $this->data;
-			$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json');
+			$resp = $resp->withStatus(200)->withHeader('Content-Type', 'application/json')->withHeader('Access-Control-Allow-Origin', '*');
 		}
 
-		$resp->withHeader('Access-Control-Allow-Origin', '*')->getBody()->write($json);
+		$resp->getBody()->write($json);
 		return $resp;
 	}
 

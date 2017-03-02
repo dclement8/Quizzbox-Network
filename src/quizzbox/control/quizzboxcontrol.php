@@ -134,43 +134,58 @@ class quizzboxcontrol
         if(!empty($args['pseudo']) && !empty($args['email']) && !empty($mdp) && !empty($mdpconfirm)) {
             if(strlen($args['pseudo']) > 2) {
                 if(strlen($args['pseudo']) < 256) {
-                    if(strlen($args['email']) > 5) {
-                        if(strlen($args['email']) < 256) {
-                            if(!filter_var($args['email'], FILTER_VALIDATE_EMAIL) === false) {
-                                if(\quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->count() == 0) {
-                                    if(\quizzbox\model\joueur::where('email', '=', $args['email'])->count() == 0) {
-                                        if($mdp == $mdpconfirm) {
-                                            if(strlen($mdp) > 5) {
-                                                /* Bien ! . */
-                                                $mdp = password_hash(hash("sha256", $mdp), PASSWORD_BCRYPT);
-                                                $user = new \quizzbox\model\joueur();
-                                                $user->pseudo = $args['pseudo'];
-                                                $user->motdepasse = $mdp;
-                                                $user->email = $args['email'];
-												$user->dateInscription = date("Y-m-d H:i:s");
-                                                $user->save();
-                                                return (new \quizzbox\view\quizzboxview($this))->render('inscriptionTraitement', $req, $resp, $args);
-                                            }
-                                            else
-                                                $_SESSION["message"] = 'Mot de passe trop court !';
-                                        }
-                                        else
-                                            $_SESSION["message"] = 'Les mots de passes sont différents !';
-                                    }
-                                    else
-                                        $_SESSION["message"] = 'Email déjà pris !';
-                                }
-                                else
-                                    $_SESSION["message"] = 'Pseudo déjà pris !';
-                            }
-                            else
-                                $_SESSION["message"] = 'E-mail invalide !';
-                        }
-                        else
-                            $_SESSION["message"] = 'E-mail trop long !';
-                    }
-                    else
-                        $_SESSION["message"] = 'E-mail trop court !';
+					if(!strstr($args['pseudo'], " ")) { 
+						if(!strstr($args['pseudo'], "@")) {
+							if(!strstr($mdp, "@")) {
+								if(strlen($args['email']) > 5) {
+									if(strlen($args['email']) < 256) {
+										if(!filter_var($args['email'], FILTER_VALIDATE_EMAIL) === false) {
+											if(\quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->count() == 0) {
+												if(\quizzbox\model\joueur::where('email', '=', $args['email'])->count() == 0) {
+													if($mdp == $mdpconfirm) {
+														if(strlen($mdp) > 5) {
+															/* Bien ! . */
+															$mdp = password_hash(hash("sha256", $mdp), PASSWORD_BCRYPT);
+															$user = new \quizzbox\model\joueur();
+															$user->pseudo = $args['pseudo'];
+															$user->motdepasse = $mdp;
+															$user->email = $args['email'];
+															$user->dateInscription = date("Y-m-d H:i:s");
+															$user->save();
+															
+															$_SESSION["message"] = 'Inscription effectuée';
+															
+															return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+														}
+														else
+															$_SESSION["message"] = 'Mot de passe trop court !';
+													}
+													else
+														$_SESSION["message"] = 'Les mots de passes sont différents !';
+												}
+												else
+													$_SESSION["message"] = 'Email déjà pris !';
+											}
+											else
+												$_SESSION["message"] = 'Pseudo déjà pris !';
+										}
+										else
+											$_SESSION["message"] = 'E-mail invalide !';
+									}
+									else
+										$_SESSION["message"] = 'E-mail trop long !';
+								}
+								else
+									$_SESSION["message"] = 'E-mail trop court !';
+							}
+							else
+								$_SESSION["message"] = 'Le mot de passe contient des caractères interdits !';
+						}
+						else
+							$_SESSION["message"] = 'Le pseudo contient des caractères interdits !';
+					}
+					else
+						$_SESSION["message"] = 'Le pseudo contient des caractères interdits !';
                 }
                 else
                     $_SESSION["message"] = 'Pseudo trop long !';
