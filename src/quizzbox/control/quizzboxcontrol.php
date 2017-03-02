@@ -375,6 +375,7 @@ class quizzboxcontrol
 			$questions = \quizzbox\model\question::where('id_quizz', $idQuizz)->get();
 
 			$jsonQuestion = '[ ';
+			$compteur = 0;
 			foreach($questions as $uneQuestion)
 			{
 				$jsonQuestion .= '{ "enonce" : "'.str_replace('"', '\"', $uneQuestion->enonce).'" , "coefficient" : '.$uneQuestion->coefficient.' , "reponses" : [ ';
@@ -383,14 +384,20 @@ class quizzboxcontrol
 				$i = 1;
 				foreach($reponses as $uneReponse)
 				{
-					$jsonQuestion .= ' { "nom" : "'.str_replace("'", "\'", $uneReponse->nom).'" , "estSolution" : '.$uneReponse->estSolution.' } ';
+					$jsonQuestion .= ' { "nom" : "'.str_replace('"', '\"', $uneReponse->nom).'" , "estSolution" : '.$uneReponse->estSolution.' } ';
 					if($i != count($reponses))
 					{
 						$jsonQuestion .= ', ';
 					}
 					$i++;
 				}
-				$jsonQuestion .= ' ] }';
+				$jsonQuestion .= ' ] } ';
+				
+				$compteur++;
+				if($compteur != count($questions))
+				{
+					$jsonQuestion .= ',';
+				}
 			}
 			$jsonQuestion .= ' ] }';
 
