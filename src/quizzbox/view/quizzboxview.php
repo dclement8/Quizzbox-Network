@@ -528,6 +528,30 @@ class quizzboxview
 				</ul>
 			</li>
 		";
+		
+		$html .= "
+			<li>
+				<h2>Quizz joués par ".$this->data->pseudo." :</h2>
+				<ul>
+		";
+
+		$quizzJoues = \quizzbox\model\joueur::find($this->data->id)->scores()->get();
+		foreach($quizzJoues as $unQuizz)
+		{
+			$leQuizz = \quizzbox\model\quizz::where('id', $unQuizz->pivot->id_quizz)->first();
+			
+			$html .= "
+				<li>
+					<a href='".$this->baseURL."/quizz/".$leQuizz->tokenWeb."/download'>".$leQuizz->nom."</a> - Score à battre : ".$unQuizz->pivot->score."
+				</li>
+			";
+		}
+
+		$html .= "
+				</ul>
+			</li>
+		";
+		
 
 		$html .= "
 			</ul>
