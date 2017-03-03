@@ -313,8 +313,25 @@ class quizzboxview
 			$position = 1;
 			foreach($scores as $unScore)
 			{
+				$color = false;
+				if(isset($_SESSION["login"]))
+				{
+					if($_SESSION["login"] == $unScore->pivot->id_joueur)
+					{
+						$color = true;
+					}
+				}
+				
+				if($color == true)
+				{
+					$html .= "<tr style='background-color:#FF7777'>";
+				}
+				else
+				{
+					$html .= "<tr>";
+				}
+				
 				$html .= "
-					<tr>
 						<td>".$position."</td>
 						<td><a href='".$this->baseURL."/profil/".$unScore->pivot->id_joueur."'>".\quizzbox\model\joueur::find($unScore->pivot->id_joueur)->pseudo."</a></td>
 						<td>".$unScore->pivot->score."</td>
