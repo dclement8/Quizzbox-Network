@@ -140,31 +140,35 @@ class quizzboxcontrol
 								if(strlen($args['email']) > 5) {
 									if(strlen($args['email']) < 256) {
 										if(!filter_var($args['email'], FILTER_VALIDATE_EMAIL) === false) {
-											if(\quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->count() == 0) {
-												if(\quizzbox\model\joueur::where('email', '=', $args['email'])->count() == 0) {
-													if($mdp == $mdpconfirm) {
-														if(strlen($mdp) > 5) {
-															/* Bien ! . */
-															$mdp = password_hash(hash("sha256", $mdp), PASSWORD_BCRYPT);
-															$user = new \quizzbox\model\joueur();
-															$user->pseudo = $args['pseudo'];
-															$user->motdepasse = $mdp;
-															$user->email = $args['email'];
-															$user->dateInscription = date("Y-m-d H:i:s");
-															$user->save();
+											if($args['pseudo'] != "admin") {
+												if(\quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->count() == 0) {
+													if(\quizzbox\model\joueur::where('email', '=', $args['email'])->count() == 0) {
+														if($mdp == $mdpconfirm) {
+															if(strlen($mdp) > 5) {
+																/* Bien ! . */
+																$mdp = password_hash(hash("sha256", $mdp), PASSWORD_BCRYPT);
+																$user = new \quizzbox\model\joueur();
+																$user->pseudo = $args['pseudo'];
+																$user->motdepasse = $mdp;
+																$user->email = $args['email'];
+																$user->dateInscription = date("Y-m-d H:i:s");
+																$user->save();
 
-															$_SESSION["message"] = 'Inscription effectuée';
+																$_SESSION["message"] = 'Inscription effectuée';
 
-															return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+																return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+															}
+															else
+																$_SESSION["message"] = 'Mot de passe trop court !';
 														}
 														else
-															$_SESSION["message"] = 'Mot de passe trop court !';
+															$_SESSION["message"] = 'Les mots de passes sont différents !';
 													}
 													else
-														$_SESSION["message"] = 'Les mots de passes sont différents !';
+														$_SESSION["message"] = 'Email déjà pris !';
 												}
 												else
-													$_SESSION["message"] = 'Email déjà pris !';
+													$_SESSION["message"] = 'Pseudo déjà pris !';
 											}
 											else
 												$_SESSION["message"] = 'Pseudo déjà pris !';
