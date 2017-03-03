@@ -321,7 +321,7 @@ class quizzboxview
 						$color = true;
 					}
 				}
-				
+
 				if($color == true)
 				{
 					$html .= "<tr style='background-color:#FF7777'>";
@@ -330,7 +330,7 @@ class quizzboxview
 				{
 					$html .= "<tr>";
 				}
-				
+
 				$html .= "
 						<td>".$position."</td>
 						<td><a href='".$this->baseURL."/profil/".$unScore->pivot->id_joueur."'>".\quizzbox\model\joueur::find($unScore->pivot->id_joueur)->pseudo."</a></td>
@@ -545,7 +545,7 @@ class quizzboxview
 				</ul>
 			</li>
 		";
-		
+
 		$html .= "
 			<li>
 				<h2>Quizz joués par ".$this->data->pseudo." :</h2>
@@ -556,7 +556,7 @@ class quizzboxview
 		foreach($quizzJoues as $unQuizz)
 		{
 			$leQuizz = \quizzbox\model\quizz::where('id', $unQuizz->pivot->id_quizz)->first();
-			
+
 			$html .= "
 				<li>
 					<a href='".$this->baseURL."/quizz/".$leQuizz->tokenWeb."/download'>".$leQuizz->nom."</a> - Score à battre : ".$unQuizz->pivot->score."
@@ -568,7 +568,7 @@ class quizzboxview
 				</ul>
 			</li>
 		";
-		
+
 
 		$html .= "
 			</ul>
@@ -612,6 +612,7 @@ EOT;
 	private function modifierQuizz($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
+		<div id="localQuizz"></div>
 		<div id="Quizzmsg"></div>
 		<form method="post" id="formulaire" action="{$this->baseURL}/modifier/{$args['id']}">
 			<input type="hidden" name="json" id="json" />
@@ -635,7 +636,7 @@ EOT;
 		</form>
 		<script type="text/javascript">
 			/* Génération du formulaire au chargement */
-			window.onload = function() { quizz.generer({$this->data['json']}); }
+			window.onload = function() { quizz.generer({$this->data['json']}); getLocal.show(); }
 		</script>
 EOT;
 		return $html;
@@ -644,7 +645,8 @@ EOT;
 	private function creer($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
-		Un quizz doit comporter au moins 1 question et 2 réponses et chaque question doit avoir au moins une réponse de juste.
+		Un quizz doit comporter au moins 1 question et 2 réponses et chaque question doit avoir au moins une réponse de juste.<br />
+		<div id="localQuizz"></div>
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
 			<input type="hidden" name="json" id="json" />
 			<p><label for="nom">Nom du quizz :</label> <input type="text" id="nom" name="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
@@ -665,9 +667,10 @@ EOT;
 
 			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Créer" onclick="quizz.envoyer()" /></p>
 		</form>
+
 		<script type="text/javascript">
 			/* Génération du formulaire au chargement */
-			window.onload = function() { quizz.generer({$this->data['json']}); }
+			window.onload = function() { quizz.generer({$this->data['json']}); getLocal.show(); }
 		</script>
 EOT;
 		return $html;

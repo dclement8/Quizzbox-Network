@@ -4,7 +4,20 @@ var htmlEntities = function(str) {
 
 var isNumeric = function(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
-}
+};
+
+var storageAvailable = function(type) {
+	try {
+		var storage = window[type],
+			x = '__storage_test__';
+		storage.setItem(x, x);
+		storage.removeItem(x);
+		return true;
+	}
+	catch(e) {
+		return false;
+	}
+};
 
 var quizz = (function() {
     // Functions nécessaires à la création/modification d'un quizz
@@ -72,21 +85,25 @@ var quizz = (function() {
 
         ajouterQuestion: function() {
             json.quizz.questions.push({"id":0,"enonce":"","coefficient":1,"reponses":[{"id":0,"nom": "", "estSolution": false}]});
+			quizz.updateStorage();
             quizz.generer();
         },
 
         ajouterReponse: function(question) {
             json.quizz.questions[question-1].reponses.push({"id":0,"nom":"","estSolution":false});
+			quizz.updateStorage();
             quizz.generer();
         },
 
         supprimerQuestion: function(question) {
             json.quizz.questions.splice(question-1, 1);
+			quizz.updateStorage();
             quizz.generer();
         },
 
         supprimerReponse: function(question, reponse) {
             json.quizz.questions[question-1].reponses.splice(reponse-1, 1);
+			quizz.updateStorage();
             quizz.generer();
         },
 
@@ -115,7 +132,8 @@ var quizz = (function() {
 
         updateSolution: function(question, reponse) {
             json.quizz.questions[question-1].reponses[reponse-1].estSolution = !(json.quizz.questions[question-1].reponses[reponse-1].estSolution);
-        },
+			quizz.updateStorage();
+		},
 
         verifierContenu: function() {
             Quizzmsg.innerHTML = '';
@@ -154,6 +172,13 @@ var quizz = (function() {
             return false;
         },
 
+		updateStorage: function() {
+			if(storageAvailable('localStorage')) {
+				console.log("update storage");
+				localStorage.setItem("quizzboxEdition", JSON.stringify(json));
+			}
+		},
+
         generer: function(data = null) {
             // Génère le formulaire de questions/réponses à partir du JSON
             var tab = '';
@@ -170,12 +195,12 @@ var quizz = (function() {
 
             for(var i=1; i <= json.quizz.questions.length; i++) {
                 tab += '<table id="question_'+i+'">';
-                tab += '<tr><td>Question n°'+i+' : <input type="text" onchange="quizz.updateEnonce('+i+', this.value)" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.quizz.questions[i - 1].enonce+'" /></td>';
-                tab += '<td>coefficient <input type="number" min="1" max="5" onchange="quizz.updateCoefficient('+i+', this.value)" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.quizz.questions[i - 1].coefficient+'" /></td></tr>';
+                tab += '<tr><td>Question n°'+i+' : <input type="text" onchange="quizz.updateEnonce('+i+', this.value)" onblur="quizz.updateStorage()" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.quizz.questions[i - 1].enonce+'" /></td>';
+                tab += '<td>coefficient <input type="number" min="1" max="5" onblur="quizz.updateStorage()" onchange="quizz.updateCoefficient('+i+', this.value)" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.quizz.questions[i - 1].coefficient+'" /></td></tr>';
 
                 // Réponses
                 for(var j=1; j <= json.quizz.questions[i - 1].reponses.length; j++) {
-                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onchange="quizz.updateReponse('+i+', '+j+', this.value)" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.quizz.questions[i - 1].reponses[j - 1].nom+'" /></td>';
+                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onblur="quizz.updateStorage()" onchange="quizz.updateReponse('+i+', '+j+', this.value)" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.quizz.questions[i - 1].reponses[j - 1].nom+'" /></td>';
                     tab += '<td>est solution ? <input type="checkbox" onclick="quizz.updateSolution('+i+', '+j+')"';
                     if(json.quizz.questions[i-1].reponses[j-1].estSolution) tab += ' checked';
                     tab += ' />';
@@ -214,4 +239,32 @@ var quizz = (function() {
             }
         }
     }
+}) ();
+
+var getLocal = (function() {
+	var local = null;
+	return {
+		show: function() {
+			/* Affichage bouton pour charger ou supprimer au chargement */
+			if(storageAvailable('localStorage')) {
+				var dlocal = localStorage.getItem("quizzboxEdition");
+				if(dlocal !== undefined && dlocal !== null && dlocal != '{}') {
+					local = JSON.parse(dlocal);
+					document.querySelector("#localQuizz").innerHTML = '<h3>Charger un quizz qui était en cours d\'édition</h3>\
+					'+local.quizz.nom+' <input type="button" value="Charger" onclick="getLocal.load();">\
+					<input type="button" value="X" onclick="getLocal.delete();">';
+				}
+			}
+		},
+
+		load: function() {
+			quizz.generer(local);
+			document.querySelector("#Quizzmsg").innerHTML = 'Quizz chargé !';
+		},
+
+		delete: function() {
+			localStorage.removeItem("quizzboxEdition");
+			document.querySelector("#localQuizz").innerHTML = '';
+		}
+	}
 }) ();
