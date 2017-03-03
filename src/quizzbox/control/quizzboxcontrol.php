@@ -338,6 +338,7 @@ class quizzboxcontrol
                         $newReponses = []; // Tableau contenant les id des réponses que l'on garde
 
                         $quizz = \quizzbox\model\quizz::find($json->quizz->id);
+						\quizzbox\model\quizz::find($json->quizz->id)->scores()->detach();
                         $quizz->nom = $json->quizz->nom;
                         $quizz->id_categorie = $json->quizz->id_categorie;
     					if($_SESSION["login"] != "admin")
