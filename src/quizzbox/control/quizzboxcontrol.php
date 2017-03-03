@@ -330,6 +330,13 @@ class quizzboxcontrol
                 $data['json'] = $_POST['json'];
                 if(\quizzbox\model\categorie::where('id', '=', $json->quizz->id_categorie)->count() == 1 && \quizzbox\model\quizz::where('id', '=', $json->quizz->id)->count() == 1) {
                     if(verifierContenu($json)) {
+
+                        $oldQuestions = \quizzbox\model\question::where('id_quizz', '=', $json->quizz->id)->lists('id'); // On obtient un tableau contenant les id de toutes les questions
+                        $newQuestions = []; // Tableau contenant les id des questions que l'on garde
+
+                        $oldReponses = \quizzbox\model\reponse::where('id_quizz', '=', $json->quizz->id)->lists('id'); // On obtient un tableau contenant les id de toutes les réponses
+                        $newReponses = []; // Tableau contenant les id des réponses que l'on garde
+
                         $quizz = \quizzbox\model\quizz::find($json->quizz->id);
                         $quizz->nom = $json->quizz->nom;
                         $quizz->id_categorie = $json->quizz->id_categorie;
@@ -348,19 +355,25 @@ class quizzboxcontrol
                                 // L'id ne correspond pas, on ne met pas cette question à jour
                                 continue;
                             }
+                            else {
+                                $newQuestions[] = $q->id;
+                            }
                             $question->enonce = $q->enonce;
                             $question->coefficient = $q->coefficient;
                             $question->id_quizz = $quizz->id;
                             $question->save();
 
                             foreach($q->reponses as $r) {
-                                $reponse = \quizzbox\model\question::find($r->id);
+                                $reponse = \quizzbox\model\reponse::find($r->id);
                                 if($reponse === null) {
                                     $reponse = new \quizzbox\model\reponse();
                                 }
                                 elseif($reponse->id_quizz != $quizz->id) {
                                     // L'id ne correspond pas, on ne met pas cette réponse à jour
                                     continue;
+                                }
+                                else {
+                                    $newReponses[] = $r->id;
                                 }
                                 $reponse->nom = $r->nom;
                                 $reponse->estSolution = $r->estSolution;
@@ -369,6 +382,14 @@ class quizzboxcontrol
                                 $reponse->save();
                             }
                         }
+
+                        // On supprime les questions et réponses qui n'apparaissent pas dans le JSON transmis
+                        $deleteQuestions = array_diff($oldQuestions, $newQuestions);
+                        $deleteReponses = array_diff($oldReponses, $newReponses);
+
+                        \quizzbox\model\reponse::whereIn('id', $deleteReponses)->delete();
+                        \quizzbox\model\question::whereIn('id', $deleteQuestions)->delete();
+
                         $args['id'] = $quizz->id_categorie;
                         return (new \quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
                     }
