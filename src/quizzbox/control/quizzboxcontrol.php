@@ -662,14 +662,14 @@ class quizzboxcontrol
 										else
 										{
 											$arr = array('error' => "En tant qu'auteur de ce quizz, vous ne pouvez pas enregistrer votre score.");
-											$resp = $resp->withStatus(200);
+											$resp = $resp->withStatus(400);
 											return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
 										}
 									}
 									else
 									{
 										$arr = array('error' => 'Vous avez déjà enregistré un score à ce quizz.');
-										$resp = $resp->withStatus(200);
+										$resp = $resp->withStatus(400);
 										return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
 									}
 								}
