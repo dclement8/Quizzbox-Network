@@ -637,7 +637,7 @@ class quizzboxcontrol
 									if(\quizzbox\model\joueur::find($lejoueur->id)->scores()->where("id_quizz", $idQuizz)->count() == 0)
 									{
 										$idAuteurQuizz = \quizzbox\model\quizz::where('tokenWeb', $args['id'])->first()->id_joueur;
-										if($idAuteurQuizz == $lejoueur->id)
+										if($idAuteurQuizz != $lejoueur->id)
 										{
 											$config = parse_ini_file("conf/config.ini");
 											$dsn = "mysql:host=".$config["host"].";dbname=".$config["database"];
