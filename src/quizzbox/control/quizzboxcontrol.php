@@ -636,25 +636,35 @@ class quizzboxcontrol
 
 									if(\quizzbox\model\joueur::find($lejoueur->id)->scores()->where("id_quizz", $idQuizz)->count() == 0)
 									{
-										$config = parse_ini_file("conf/config.ini");
-										$dsn = "mysql:host=".$config["host"].";dbname=".$config["database"];
-										$db = new \PDO($dsn, $config["username"], $config["password"]);
-										$db->query("SET CHARACTER SET utf8");
+										$idAuteurQuizz = \quizzbox\model\quizz::where('tokenWeb', $args['id'])->first()->id_joueur;
+										if($idAuteurQuizz == $lejoueur->id)
+										{
+											$config = parse_ini_file("conf/config.ini");
+											$dsn = "mysql:host=".$config["host"].";dbname=".$config["database"];
+											$db = new \PDO($dsn, $config["username"], $config["password"]);
+											$db->query("SET CHARACTER SET utf8");
 
-										$insert = "INSERT INTO scores VALUES(:score, NOW(), NULL, :joueur, :quizz)";
-										$insert_prep = $db->prepare($insert);
+											$insert = "INSERT INTO scores VALUES(:score, NOW(), NULL, :joueur, :quizz)";
+											$insert_prep = $db->prepare($insert);
 
-										$idJoueur = $lejoueur->id;
+											$idJoueur = $lejoueur->id;
 
-										$insert_prep->bindParam(':score', $score, \PDO::PARAM_INT);
-										$insert_prep->bindParam(':joueur', $idJoueur, \PDO::PARAM_INT);
-										$insert_prep->bindParam(':quizz', $idQuizz, \PDO::PARAM_INT);
+											$insert_prep->bindParam(':score', $score, \PDO::PARAM_INT);
+											$insert_prep->bindParam(':joueur', $idJoueur, \PDO::PARAM_INT);
+											$insert_prep->bindParam(':quizz', $idQuizz, \PDO::PARAM_INT);
 
-										$insert_prep->execute();
+											$insert_prep->execute();
 
-										$arr = array('success' => 'Score ajouté avec succès.');
-										$resp = $resp->withStatus(201);
-										return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+											$arr = array('success' => 'Score ajouté avec succès.');
+											$resp = $resp->withStatus(201);
+											return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+										}
+										else
+										{
+											$arr = array('error' => "En tant qu'auteur de ce quizz, vous ne pouvez pas enregistrer votre score.");
+											$resp = $resp->withStatus(200);
+											return (new \quizzbox\view\quizzboxview($arr))->envoiScore($req, $resp, $args);
+										}
 									}
 									else
 									{
