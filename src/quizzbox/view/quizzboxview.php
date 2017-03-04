@@ -270,7 +270,7 @@ class quizzboxview
 								</form>
 							</li>
 							<li>
-								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
+								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
 									<button type='submit'>Supprimer le quizz</button>
 								</form>
 							</li>
@@ -287,7 +287,7 @@ class quizzboxview
 									</form>
 								</li>
 								<li>
-									<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
+									<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
 										<button type='submit'>Supprimer le quizz</button>
 									</form>
 								</li>
@@ -500,7 +500,7 @@ class quizzboxview
 			{
 				$html .= "
 				<li>
-					<form method='post' action='".$this->baseURL."/profil/".$this->data->id."/supprimer/'>
+					<form method='post' action='".$this->baseURL."/profil/".$this->data->id."/supprimer/' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce joueur ?');\">
 						<button type='submit'>Supprimer le joueur</button>
 					</form>
 				</li>";
@@ -529,7 +529,7 @@ class quizzboxview
 						<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
 							<button type='submit'>Modifier le quizz</button>
 						</form>
-						<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer'>
+						<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
 							<button type='submit'>Supprimer le quizz</button>
 						</form>
 					";
