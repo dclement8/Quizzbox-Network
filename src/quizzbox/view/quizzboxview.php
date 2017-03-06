@@ -88,6 +88,7 @@ class quizzboxview
 					<meta name='viewport' content='width=device-width, initial-scale=1'>
 					<title>Quizzbox</title>
 					<link rel='stylesheet' type='text/css' href='".$this->baseURL."/css/style.css'/>
+					<link rel='stylesheet' type='text/css' href='".$this->baseURL."/css/main.css'/>
 				</head>
 				<body>
 					<header>
@@ -95,11 +96,12 @@ class quizzboxview
 							Quizzbox
 						</h1>
 					</header>
-					<ul id='menu'>
+					<div class='conteneur'>
+					<ul id='menu' class='navbar'>
 						".$this->menu($req, $resp, $args)."
 					</ul>
 					<form id='recherche' name='recherche' method='GET' action='".$this->baseURL."/recherche'>
-						<input type='text' name='q' id='rechercheText' placeholder='Rechercher un quizz...'
+						<input type='text' class='' name='q' id='rechercheText' placeholder='Rechercher un quizz...'
 		";
 
 		if(isset($_GET["q"]))
@@ -111,7 +113,7 @@ class quizzboxview
 		}
 
 		$html .= " required />
-						<button type='submit' id='actionRecherche'>OK</button>
+						<button type='submit' class='btn' id='actionRecherche'>OK</button>
 					</form>
 
 		";
@@ -131,6 +133,7 @@ class quizzboxview
 	private function footer($req, $resp, $args)
 	{
 		$html = "
+					</div>
 					</div>
 					<footer>
 						Quizzbox
@@ -582,7 +585,7 @@ class quizzboxview
 	<form method="post" action="{$this->baseURL}/connexion">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
-			<p><input type="submit" value="Connexion" /></p>
+			<p><input type="submit" class="btn" value="Connexion" /></p>
 		</form>
 EOT;
 		return $html;
@@ -599,7 +602,7 @@ EOT;
 			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
 			<p><label for="mdpconfirm">Confirmation :</label> <input type="password" name="mdpconfirm" maxlength="255" required/></p>
-			<p><input type="submit" value="Inscription" /></p>
+			<p><input type="submit" class="btn" value="Inscription" /></p>
 		</form>
 EOT;
 		return $html;
@@ -632,7 +635,7 @@ EOT;
 			<div id="questions">
 			</div>
 
-			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Modifier" onclick="quizz.envoyer()" /></p>
+			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" class="btn" value="Modifier" onclick="quizz.envoyer()" /></p>
 		</form>
 		<script type="text/javascript">
 			/* Génération du formulaire au chargement */
@@ -751,7 +754,7 @@ EOT;
 				<input type='text' id='categorieForm' name='categorieForm' placeholder='Nom de catégorie' required />
 				<label for='descriptionForm'>Description </label>
 				<input type='text' id='descriptionForm' name='descriptionForm' placeholder='Description de la catégorie' required />
-				<button type='submit'>Créer la catégorie</button>
+				<button class=\"btn\" type='submit'>Créer la catégorie</button>
 			</form>
 		";
 
