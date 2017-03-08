@@ -87,6 +87,12 @@ class quizzboxcontrol
 			else
 			{
 				$joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
+				
+				if($joueur == null && $joueur == false)
+				{
+					$joueur = \quizzbox\model\joueur::where('email', '=', $args['pseudo'])->first();
+				}
+				
 				if($joueur !== null && $joueur !== false) {
 					if(password_verify(hash("sha256", $mdp), $joueur->motdepasse)) {
 						$_SESSION["login"] = $joueur->id;

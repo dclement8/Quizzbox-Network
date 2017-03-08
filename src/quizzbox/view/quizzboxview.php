@@ -580,7 +580,7 @@ class quizzboxview
 		$html = <<<EOT
 		<h2>Connexion :</h2>
 		<form method="post" action="{$this->baseURL}/connexion">
-			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
+			<p><label for="pseudo">Email/Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
 			<p><input type="submit" class="btn" value="Connexion" /></p>
 		</form>
