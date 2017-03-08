@@ -650,7 +650,7 @@ EOT;
 		<div id="localQuizz"></div>
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
 			<input type="hidden" name="json" id="json" />
-			<p><label for="nom">Nom du quizz :</label> <input type="text" id="nom" name="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
+			<p><label for="nom">Nom du quizz :</label> <input type="text" placeholder="Nom du quizz" id="nom" name="nom" onkeyup="quizz.updateNom(this.value)" maxlength="255" value="" required/></p>
 			<p><label for="categorie">Catégorie :</label>
 			<select name="categorie" id="categorie" onchange="quizz.updateCategorie(this.value)">
 				<option value="0">------------</option>

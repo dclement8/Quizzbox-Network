@@ -195,12 +195,12 @@ var quizz = (function() {
 
             for(var i=1; i <= json.quizz.questions.length; i++) {
                 tab += '<table id="question_'+i+'">';
-                tab += '<tr><td>Question n°'+i+' : <input type="text" onchange="quizz.updateEnonce('+i+', this.value)" onblur="quizz.updateStorage()" onkeyup="quizz.updateEnonce('+i+', this.value)" value="'+json.quizz.questions[i - 1].enonce+'" /></td>';
+                tab += '<tr><td>Question n°'+i+' : <input type="text" onchange="quizz.updateEnonce('+i+', this.value)" onblur="quizz.updateStorage()" onkeyup="quizz.updateEnonce('+i+', this.value)" placeholder="Votre question ?" value="'+json.quizz.questions[i - 1].enonce+'" /></td>';
                 tab += '<td>coefficient <input type="number" min="1" max="5" onblur="quizz.updateStorage()" onchange="quizz.updateCoefficient('+i+', this.value)" onkeyup="quizz.updateCoefficient('+i+', this.value)" value="'+json.quizz.questions[i - 1].coefficient+'" /></td></tr>';
 
                 // Réponses
                 for(var j=1; j <= json.quizz.questions[i - 1].reponses.length; j++) {
-                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" onblur="quizz.updateStorage()" onchange="quizz.updateReponse('+i+', '+j+', this.value)" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.quizz.questions[i - 1].reponses[j - 1].nom+'" /></td>';
+                    tab += '<tr id="reponse_'+i+'_'+j+'"><td>Réponse n°'+j+' : <input type="text" placeholder="Une réponse" onblur="quizz.updateStorage()" onchange="quizz.updateReponse('+i+', '+j+', this.value)" onkeyup="quizz.updateReponse('+i+', '+j+', this.value)" value="'+json.quizz.questions[i - 1].reponses[j - 1].nom+'" /></td>';
                     tab += '<td>est solution ? <input type="checkbox" onclick="quizz.updateSolution('+i+', '+j+')"';
                     if(json.quizz.questions[i-1].reponses[j-1].estSolution) tab += ' checked';
                     tab += ' />';
@@ -208,9 +208,9 @@ var quizz = (function() {
                     tab += '</td></tr>';
                 }
 
-                tab += '<tr class="button"><td><input type="button" value="Ajouter une réponse" onclick="quizz.ajouterReponse('+i+')" /> ';
-                if(i > 1) tab += '<input type="button" value="X" onclick="quizz.supprimerQuestion('+i+')">';
-                tab += '</td><td></td></tr>';
+                tab += '<tr class="button"><td><input type="button" value="Ajouter une réponse" onclick="quizz.ajouterReponse('+i+')" /> </td>';
+                if(i > 1) tab += '<td><input type="button" value="Supprimer la question" onclick="quizz.supprimerQuestion('+i+')"></td>';
+                tab += '</tr>';
                 tab += '</table>';
             }
 
