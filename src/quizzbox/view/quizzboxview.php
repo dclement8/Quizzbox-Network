@@ -93,7 +93,7 @@ class quizzboxview
 				<body>
 					<header>
 						<h1>
-							Quizzbox
+							<a href='".$this->baseURL."'>Quizzbox</a>
 						</h1>
 					</header>
 					<div class='conteneur'>
@@ -203,13 +203,14 @@ class quizzboxview
 
 	private function afficherCategories($req, $resp, $args)
 	{
-		$html = "<ul class='elements'>";
+		$html = "<h2>Catégories :</h2>
+		<ul class='elements'>";
 		foreach($this->data as $uneCategorie)
 		{
 			$html .= "
 				<li class='block'>
 					<h1>
-						".$uneCategorie->nom."
+						<a href='".$this->baseURL."/categories/".$uneCategorie->id."'>".$uneCategorie->nom."</a>
 					</h1>
 					<p>
 						<b>Description : </b>
@@ -219,9 +220,6 @@ class quizzboxview
 						<b>Nombre de quizz : </b>
 						".\quizzbox\model\quizz::where('id_categorie', $uneCategorie->id)->count()."
 					</p>
-					<a class='button' href='".$this->baseURL."/categories/".$uneCategorie->id."'>
-						Consulter les quizz
-					</a>
 				</li>
 			";
 		}
@@ -232,7 +230,7 @@ class quizzboxview
 
 	private function afficherQuizz($req, $resp, $args)
 	{
-		$html = "<p>".count($this->data)." quizz trouvé(s)</p>";
+		$html = "<h2>".\quizzbox\model\categorie::find($args['id'])->nom." :</h2><p>".count($this->data)." quizz trouvé(s)</p>";
 		$html .= "<ul class='elements'>";
 		foreach($this->data as $unQuizz)
 		{
@@ -467,10 +465,8 @@ class quizzboxview
 
 
 		$html = "
+			<h2>Profil de ".$this->data->pseudo." :</h2>
 			<ul class='profil'>
-				<li>
-					<b>".$this->data->pseudo."</b>
-				</li>
 				<li>
 					<b>Inscrit le : </b>".$this->data->dateInscription."
 				</li>
@@ -512,7 +508,7 @@ class quizzboxview
 
 		$html .= "
 			<li>
-				<h2>Quizz créés par ".$this->data->pseudo." :</h2>
+				<h3>Quizz créés par ".$this->data->pseudo." :</h3>
 				<ul>
 		";
 
@@ -551,7 +547,7 @@ class quizzboxview
 
 		$html .= "
 			<li>
-				<h2>Quizz joués par ".$this->data->pseudo." :</h2>
+				<h3>Quizz joués par ".$this->data->pseudo." :</h3>
 				<ul>
 		";
 
@@ -582,7 +578,8 @@ class quizzboxview
 
 	private function connexionForm($req, $resp, $args) {
 		$html = <<<EOT
-	<form method="post" action="{$this->baseURL}/connexion">
+		<h2>Connexion :</h2>
+		<form method="post" action="{$this->baseURL}/connexion">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
 			<p><input type="submit" class="btn" value="Connexion" /></p>
@@ -597,6 +594,7 @@ EOT;
 
 	private function inscriptionForm($req, $resp, $args) {
 		$html = <<<EOT
+		<h2>S'inscrire :</h2>
 		<form method="post" action="{$this->baseURL}/inscription">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
