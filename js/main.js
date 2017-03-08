@@ -250,9 +250,9 @@ var getLocal = (function() {
 				var dlocal = localStorage.getItem("quizzboxEdition");
 				if(dlocal !== undefined && dlocal !== null && dlocal != '{}') {
 					local = JSON.parse(dlocal);
-					document.querySelector("#localQuizz").innerHTML = '<h3>Charger un quizz qui était en cours d\'édition</h3>\
+					document.querySelector("#localQuizz").innerHTML = '<b>Charger un quizz en cours d\'édition</b>\
 					'+local.quizz.nom+' <input type="button" value="Charger" onclick="getLocal.load();">\
-					<input type="button" value="X" onclick="getLocal.delete();">';
+					<input type="button" value="Supprimer le quizz sauvé" onclick="getLocal.delete();">';
 				}
 			}
 		},
