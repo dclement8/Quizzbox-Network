@@ -154,9 +154,9 @@ class quizzboxcontrol
 																$user->dateInscription = date("Y-m-d H:i:s");
 																$user->save();
 
-																$_SESSION["message"] = 'Inscription effectuée';
+																$_SESSION["message"] = 'Inscription effectuée. Vous êtes à présent connecté !';
 
-																return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+																return (new \quizzbox\control\quizzboxcontrol($this))->connexionTraitement($req, $resp, $args);
 															}
 															else
 																$_SESSION["message"] = 'Mot de passe trop court !';
