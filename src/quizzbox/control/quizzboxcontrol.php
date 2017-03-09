@@ -164,10 +164,10 @@ class quizzboxcontrol
 											Récupération de mot de passe pour le compte Quizzbox Network du joueur <b>".$joueur->pseudo."</b>.
 										</p>
 										<p>
-											<b>Nous vous invitons à venir le changer depuis <a href='".$req->getUri()->getBasePath()."/oubli/".$tokenRecup."'>ce lien</a></b>.
+											<b>Nous vous invitons à venir le changer depuis <a href='".$req->getUri()."/oubli/".$tokenRecup."'>ce lien</a></b>.
 										</p>
 										<p>
-											Si vous n'arrivez pas à cliquer sur le lien, vous pouvez le copier-coller dans la barre d'adresse (URL) de votre navigateur :  <b><a href='".$req->getUri()->getBasePath()."/oubli/".$tokenRecup."'>".$req->getUri()->getBasePath()."/oubli/".$tokenRecup."</a></b>
+											Si vous n'arrivez pas à cliquer sur le lien, vous pouvez le copier-coller dans la barre d'adresse (URL) de votre navigateur :  <b><a href='".$req->getUri()."/oubli/".$tokenRecup."'>".$req->getUri()."/oubli/".$tokenRecup."</a></b>
 										</p>
 										<p>
 											Bien cordialement,<br/>
@@ -176,8 +176,8 @@ class quizzboxcontrol
 									</body>
 								</html>
 							";
-							$headers = 'From: noreply@quizzbox.net' . "\r\n";
-							$headers .= 'MIME-Version: 1.0' . "\r\n";
+							//$headers = 'From: noreply@quizzbox.net' . "\r\n";
+							$headers = 'MIME-Version: 1.0' . "\r\n";
 							$headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
 
 							if(mail($to, $subject, $message, $headers))
