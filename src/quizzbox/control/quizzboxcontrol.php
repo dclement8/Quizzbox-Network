@@ -116,6 +116,7 @@ class quizzboxcontrol
 			}
 			else
 			{
+				$_SESSION["message"] = 'Vous devez remplir tous les champs !';
 				return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
 			}
 		}

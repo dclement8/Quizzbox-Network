@@ -78,6 +78,12 @@ class quizzboxview
 			";
 		}
 
+		$html .= "
+			<li>
+				<a href='https://webetu.iutnc.univ-lorraine.fr/www/piguet2u/cms_projettutore/'>Créez votre Quizzbox</a>
+			</li>
+		";
+		
 		return $html;
 	}
 
@@ -588,8 +594,8 @@ class quizzboxview
 		$html = <<<EOT
 		<h2>Connexion :</h2>
 		<form method="post" action="{$this->baseURL}/connexion">
-			<p><label for="pseudo">Email/Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
-			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
+			<p><label for="pseudo">Email/Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required /></p>
+			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" /></p>
 			<p><input type="submit" name="connexion" class="btn" value="Connexion" /></p>
 			<p><input type="submit" name="oubli" class="btn" value="Mot de passe oublié" /></p>
 		</form>
