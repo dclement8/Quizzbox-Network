@@ -96,7 +96,7 @@ class quizzboxview
 				<body>
 					<header>
 						<h1>
-							<a href='".$this->baseURL."'>Quizzbox</a>
+							<a href='".$this->baseURL."'>Quizzbox Network</a>
 						</h1>
 					</header>
 					<div class='conteneur'>
