@@ -251,10 +251,29 @@ class quizzboxview
 					<p>
 						<b>Détails :</b>
 						<ul>
-							<li>
-								<b>Créateur : </b>
-								<a href='".$this->baseURL."/profil/".$unQuizz->id_joueur."'>".\quizzbox\model\joueur::find($unQuizz->id_joueur)->pseudo."</a>
-							</li>
+			";
+			
+			if(isset($unQuizz->id_joueur))
+			{
+				$html .= "
+					<li>
+						<b>Créateur : </b>
+						<a href='".$this->baseURL."/profil/".$unQuizz->id_joueur."'>".\quizzbox\model\joueur::find($unQuizz->id_joueur)->pseudo."</a>
+					</li>
+				";
+			}
+			else
+			{
+				// Cas où l'administrateur créé le quizz : id_joueur = NULL
+				
+				$html .= "
+					<li>
+						<b>Créateur :</b> Administrateur
+					</li>
+				";
+			}
+			
+			$html .= "
 							<li>
 								<b>Nombre de questions : </b>
 								".\quizzbox\model\question::where('id_quizz', $unQuizz->id)->count()."
