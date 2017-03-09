@@ -955,4 +955,34 @@ class quizzboxcontrol
 		$_SESSION["message"] = 'La catégorie a été crée !';
 		return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 	}
+	
+	public function viderTousScores(Request $req, Response $resp, $args)
+	{
+		$lesQuizz = \quizzbox\model\quizz::all();
+		foreach($lesQuizz as $unQuizz)
+		{
+			$unQuizz->scores()->detach();
+		}
+		
+		$_SESSION["message"] = 'Tous les scores enregistrés ont été supprimé !';
+		return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+	}
+	
+	public function viderScores(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		
+		if(\quizzbox\model\quizz::where('id', $id)->get()->toJson() != "[]")
+		{
+			\quizzbox\model\quizz::find($id)->scores()->detach();
+			
+			$_SESSION["message"] = 'Les scores enregistrés sur ce quizz ont été supprimé !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+		else
+		{
+			$_SESSION["message"] = 'Quizz introuvable !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
 }

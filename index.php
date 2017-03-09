@@ -148,5 +148,17 @@ $app->post('/oubli/{token}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->recupAction($req, $resp, $args);
 })->setName('recupAction');
 
+$app->get('/vider', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->viderTousScores($req, $resp, $args);
+})->setName('viderTousScores')->add(new quizzbox\utils\authentificationAdmin());
+
+$app->post('/quizz/{id}/vider', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->viderScores($req, $resp, $args);
+})->setName('viderScores')->add(new quizzbox\utils\authentificationAdmin());
+
+$app->get('/quizz/{id}/vider', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+})->setName('viderScores')->add(new quizzbox\utils\authentificationAdmin());
+
 
 $app->run();
