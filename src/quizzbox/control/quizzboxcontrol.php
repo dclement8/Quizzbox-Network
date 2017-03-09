@@ -69,34 +69,15 @@ class quizzboxcontrol
         if(isset($_POST['mdp']))
             $mdp = $_POST['mdp'];
 
-        if(!empty($args['pseudo']) && !empty($mdp)) {
-			if($args['pseudo'] === "admin")
-			{
-				if($mdp === "174086")
+		if(isset($_POST['connexion']))
+		{
+			if(!empty($args['pseudo']) && !empty($mdp)) {
+				if($args['pseudo'] === "admin")
 				{
-					$_SESSION["login"] = "admin";
-					$_SESSION["message"] = 'Vous êtes connecté en tant qu\'administrateur !';
-					return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
-				}
-				else
-				{
-					$_SESSION["message"] = 'Mot de passe incorrect !';
-					return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
-				}
-			}
-			else
-			{
-				$joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
-				
-				if($joueur == null && $joueur == false)
-				{
-					$joueur = \quizzbox\model\joueur::where('email', '=', $args['pseudo'])->first();
-				}
-				
-				if($joueur !== null && $joueur !== false) {
-					if(password_verify(hash("sha256", $mdp), $joueur->motdepasse)) {
-						$_SESSION["login"] = $joueur->id;
-						$_SESSION["message"] = 'Vous êtes connecté !';
+					if($mdp === "174086")
+					{
+						$_SESSION["login"] = "admin";
+						$_SESSION["message"] = 'Vous êtes connecté en tant qu\'administrateur !';
 						return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 					}
 					else
@@ -107,17 +88,200 @@ class quizzboxcontrol
 				}
 				else
 				{
-					$_SESSION["message"] = 'Joueur inexistant !';
+					$joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
+					
+					if($joueur == null && $joueur == false)
+					{
+						$joueur = \quizzbox\model\joueur::where('email', '=', $args['pseudo'])->first();
+					}
+					
+					if($joueur !== null && $joueur !== false) {
+						if(password_verify(hash("sha256", $mdp), $joueur->motdepasse)) {
+							$_SESSION["login"] = $joueur->id;
+							$_SESSION["message"] = 'Vous êtes connecté !';
+							return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+						}
+						else
+						{
+							$_SESSION["message"] = 'Mot de passe incorrect !';
+							return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+						}
+					}
+					else
+					{
+						$_SESSION["message"] = 'Joueur inexistant !';
+						return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+					}
+				}
+			}
+			else
+			{
+				return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+			}
+		}
+		else
+		{
+			if(isset($_POST['oubli']))
+			{
+				if(!empty($args['pseudo']))
+				{
+					$joueur = \quizzbox\model\joueur::where('pseudo', '=', $args['pseudo'])->first();
+					
+					if($joueur == null && $joueur == false)
+					{
+						$joueur = \quizzbox\model\joueur::where('email', '=', $args['pseudo'])->first();
+					}
+					
+					if($joueur !== null && $joueur !== false)
+					{
+						// Pas plus de 10 récupérations de compte
+						$recup = \quizzbox\model\recup::where('id_joueur', '=', $joueur->id);
+						if($recup->count() < 10)
+						{
+							$factory = new \RandomLib\Factory;
+							$generator = $factory->getGenerator(new \SecurityLib\Strength(\SecurityLib\Strength::MEDIUM));
+							$tokenRecup = $generator->generateString(32, 'abcdefghijklmnopqrstuvwxyz0123456789');
+							
+							$recup = new \quizzbox\model\recup();
+							$recup->token = $tokenRecup;
+							$recup->id_joueur = $joueur->id;
+							$recup->save();
+							
+							$to = $joueur->email;
+							$subject = 'Quizzbox Network : récupération de votre mot de passe';
+							$message = "
+								<html>
+									<head>
+										<meta charset='UTF-8'>
+										<title>Quizzbox Network : récupération de votre mot de passe</title>
+									</head>
+									<body>
+										<h1>Quizzbox Network</h1>
+										<h2>Récupération de votre mot de passe</h2>
+										<hr/>
+										<p>
+											Récupération de mot de passe pour le compte Quizzbox Network du joueur <b>".$joueur->pseudo."</b>.
+										</p>
+										<p>
+											<b>Nous vous invitons à venir le changer depuis <a href='".$req->getUri()->getBasePath()."/oubli/".$tokenRecup."'>ce lien</a></b>.
+										</p>
+										<p>
+											Si vous n'arrivez pas à cliquer sur le lien, vous pouvez le copier-coller dans la barre d'adresse (URL) de votre navigateur :  <b><a href='".$req->getUri()->getBasePath()."/oubli/".$tokenRecup."'>".$req->getUri()->getBasePath()."/oubli/".$tokenRecup."</a></b>
+										</p>
+										<p>
+											Bien cordialement,<br/>
+											<b>Quizzbox Network</b>
+										</p>
+									</body>
+								</html>
+							";
+							$headers = 'From: noreply@quizzbox.net' . "\r\n";
+							$headers .= 'MIME-Version: 1.0' . "\r\n";
+							$headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+
+							if(mail($to, $subject, $message, $headers))
+							{
+								$_SESSION["message"] = 'Un mail de récupération de mot de passe a été envoyé à '.$joueur->email.' !';
+								return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+							}
+							else
+							{
+								$_SESSION["message"] = 'Erreur lors de l\'envoi du mail de récupération de mot de passe !';
+								return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+							}
+						}
+						else
+						{
+							$_SESSION["message"] = 'Trop de tentatives de récupération de compte !';
+							return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+						}
+					}
+					else
+					{
+						$_SESSION["message"] = 'Impossible de récupérer le mot de passe : joueur introuvable !';
+						return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+					}
+				}
+				else
+				{
 					return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
 				}
 			}
-        }
-        else
-		{
-			return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+			else
+			{
+				return (new \quizzbox\view\quizzboxview($this))->render('connexionForm', $req, $resp, $args);
+			}
 		}
     }
 
+	public function recupForm(Request $req, Response $resp, $args)
+	{
+        $args['token'] = filter_var($args['token'], FILTER_SANITIZE_STRING);
+		
+		$recup = \quizzbox\model\recup::where('token', '=', $args['token']);
+		if($recup->count() > 0)
+		{
+			return (new \quizzbox\view\quizzboxview($this))->render('recupForm', $req, $resp, $args);
+		}
+		else
+		{
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+    }
+	
+	public function recupAction(Request $req, Response $resp, $args)
+	{
+        $args['token'] = filter_var($args['token'], FILTER_SANITIZE_STRING);
+		$pseudo = filter_var($_POST['pseudoEmailForm'], FILTER_SANITIZE_STRING);
+		
+		$recup = \quizzbox\model\recup::where('token', '=', $args['token']);
+		if($recup->count() > 0)
+		{
+			if($_POST['newMdpForm'] == $_POST['newMdp2Form'])
+			{
+				$joueur = \quizzbox\model\joueur::where('pseudo', '=', $pseudo)->first();
+				
+				if($joueur == null && $joueur == false)
+				{
+					$joueur = \quizzbox\model\joueur::where('email', '=', $pseudo)->first();
+				}
+				
+				if($joueur !== null && $joueur !== false)
+				{
+					if($joueur->id == \quizzbox\model\recup::where('token', '=', $args['token'])->first()->id_joueur)
+					{
+						$joueur->motdepasse = password_hash(hash("sha256", $_POST['newMdpForm']), PASSWORD_BCRYPT);
+						$joueur->save();
+						\quizzbox\model\recup::destroy($args['token']);
+						
+						$_SESSION["login"] = $joueur->id;
+						$_SESSION["message"] = 'Votre mot de passe a été changé ! Vous êtes à présent connecté !';
+						return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+					}
+					else
+					{
+						$_SESSION["message"] = 'Vous n\'êtes pas autorisé à modifier le mot de passe !';
+						return (new \quizzbox\view\quizzboxview($this))->render('recupForm', $req, $resp, $args);
+					}
+				}
+				else
+				{
+					$_SESSION["message"] = 'Impossible de récupérer le mot de passe : joueur introuvable !';
+					return (new \quizzbox\view\quizzboxview($this))->render('recupForm', $req, $resp, $args);
+				}
+			}
+			else
+			{
+				$_SESSION["message"] = 'Les mots de passe ne sont pas identiques !';
+				return (new \quizzbox\view\quizzboxview($this))->render('recupForm', $req, $resp, $args);
+			}
+		}
+		else
+		{
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+    }
+	
     public function inscriptionForm(Request $req, Response $resp, $args) {
         $args['pseudo'] = '';
         $args['email'] = '';
@@ -160,7 +324,7 @@ class quizzboxcontrol
 																$user->dateInscription = date("Y-m-d H:i:s");
 																$user->save();
 
-																$_SESSION["message"] = 'Inscription effectuée. Vous êtes à présent connecté !';
+																$_SESSION["message"] = 'Inscription effectuée. Connectez-vous !';
 
 																return (new \quizzbox\control\quizzboxcontrol($this))->connexionTraitement($req, $resp, $args);
 															}

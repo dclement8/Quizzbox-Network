@@ -582,7 +582,8 @@ class quizzboxview
 		<form method="post" action="{$this->baseURL}/connexion">
 			<p><label for="pseudo">Email/Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" required/></p>
-			<p><input type="submit" class="btn" value="Connexion" /></p>
+			<p><input type="submit" name="connexion" class="btn" value="Connexion" /></p>
+			<p><input type="submit" name="oubli" class="btn" value="Mot de passe oublié" /></p>
 		</form>
 EOT;
 		return $html;
@@ -753,6 +754,23 @@ EOT;
 				<label for='descriptionForm'>Description </label>
 				<input type='text' id='descriptionForm' name='descriptionForm' placeholder='Description de la catégorie' required />
 				<button class=\"btn\" type='submit'>Créer la catégorie</button>
+			</form>
+		";
+
+		return $html;
+	}
+	
+	private function recupForm($req, $resp, $args)
+	{
+		$html = "
+			<form name='post' action='".$this->baseURL."/oubli/".$args['token']."' method='post'>
+				<label for='pseudoEmailForm'>Pseudo/Email</label>
+				<input type='text' id='pseudoEmailForm' name='pseudoEmailForm' placeholder='Pseudo/Email' required /><br/>
+				<label for='newMdpForm'>Nouveau mot de passe </label>
+				<input type='password' id='newMdpForm' name='newMdpForm' placeholder='Entrez votre nouveau mot de passe' required /><br/>
+				<label for='newMdp2Form'>Confirmer le mot de passe </label>
+				<input type='password' id='newMdp2Form' name='newMdp2Form' placeholder='Confirmez le nouveau mot de passe' required /><br/>
+				<button class=\"btn\" type='submit'>Récupérer le compte</button>
 			</form>
 		";
 

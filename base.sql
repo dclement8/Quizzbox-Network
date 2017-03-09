@@ -85,6 +85,17 @@ CREATE TABLE scores(
         PRIMARY KEY (id_joueur ,id_quizz )
 )ENGINE=InnoDB;
 
+
+#------------------------------------------------------------
+# Table: recup
+#------------------------------------------------------------
+
+CREATE TABLE recup(
+		token	varchar(255) NOT NULL ,
+		id_joueur int(11) NOT NULL ,
+		PRIMARY KEY (token )
+) ENGINE=InnoDB;
+
 ALTER TABLE quizz ADD CONSTRAINT FK_quizz_id_categorie FOREIGN KEY (id_categorie) REFERENCES categorie(id);
 ALTER TABLE quizz ADD CONSTRAINT FK_quizz_id_joueur FOREIGN KEY (id_joueur) REFERENCES joueur(id);
 ALTER TABLE question ADD CONSTRAINT FK_question_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);
@@ -92,3 +103,4 @@ ALTER TABLE reponse ADD CONSTRAINT FK_reponse_id_question FOREIGN KEY (id_questi
 ALTER TABLE reponse ADD CONSTRAINT FK_reponse_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);
 ALTER TABLE scores ADD CONSTRAINT FK_scores_id_joueur FOREIGN KEY (id_joueur) REFERENCES joueur(id);
 ALTER TABLE scores ADD CONSTRAINT FK_scores_id_quizz FOREIGN KEY (id_quizz) REFERENCES quizz(id);
+ALTER TABLE recup ADD CONSTRAINT FK_recup_id_joueur FOREIGN KEY (id_joueur) REFERENCES joueur(id);

@@ -140,5 +140,13 @@ $app->get('/categories/{id}/json', function (Request $req, Response $resp, $args
 	return (new quizzbox\control\quizzboxcontrol($this))->afficherQuizzJSON($req, $resp, $args);
 })->setName('afficherQuizzJSON');
 
+$app->get('/oubli/{token}', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->recupForm($req, $resp, $args);
+})->setName('recupForm');
+
+$app->post('/oubli/{token}', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->recupAction($req, $resp, $args);
+})->setName('recupAction');
+
 
 $app->run();
