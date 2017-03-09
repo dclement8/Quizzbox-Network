@@ -197,7 +197,7 @@ section, form {
     font-weight: bold;
     margin-bottom: 10px; }
   section .btn, form .btn {
-    width: 100%; }
+    width: 300px; }
 
 @media screen and (max-width: 1000px) {
   .line section, .line-margin section, .line-margin-1 section, .line-margin-2 section, .line-margin-3 section, .line-margin-4 section {
