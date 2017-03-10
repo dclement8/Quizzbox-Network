@@ -242,7 +242,10 @@ class quizzboxview
 		$html = "";
 		if(isset($args['id']))
 		{
-			$html .= "<h2>".\quizzbox\model\categorie::find($args['id'])->nom." :</h2>";
+			if(\quizzbox\model\categorie::where('id', $args['id'])->count() > 0)
+			{
+				$html .= "<h2>".\quizzbox\model\categorie::find($args['id'])->nom." :</h2>";
+			}
 		}
 		
 		$html .= "<p>".count($this->data)." quizz trouvé(s)</p>";

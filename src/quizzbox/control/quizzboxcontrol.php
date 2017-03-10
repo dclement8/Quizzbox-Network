@@ -34,7 +34,7 @@ class quizzboxcontrol
 	public function afficherQuizz(Request $req, Response $resp, $args)
 	{
 		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
-		$quizz = \quizzbox\model\quizz::where('id_categorie', $id)->orderBy('nom')->get();
+		$quizz = \quizzbox\model\quizz::where('id_categorie', $id)->orderBy('id', 'desc')->get();
 
 		return (new \quizzbox\view\quizzboxview($quizz))->render('afficherQuizz', $req, $resp, $args);
     }
