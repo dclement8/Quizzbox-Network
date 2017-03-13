@@ -208,10 +208,10 @@ var quizz = (function () {
                     tab += '</td></tr>';
                 }
 
-                tab += '<tr class="button"><td><input type="button" value="Ajouter une réponse" onclick="quizz.ajouterReponse(' + i + ')" /> </td>';
-                tab += '<tr class="button"><td><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Créez le quizz" onclick="quizz.envoyer()" /></td>';
+                tab += '<tr class="button"><td><input type="button" class="btn" value="Ajouter une réponse" onclick="quizz.ajouterReponse(' + i + ')" /> </td>';
+                tab += '<tr class="button"><td><input type="button" class="btn" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" class="btn" value="Créez le quizz" onclick="quizz.envoyer()" /></td>';
 
-                if (i > 1) tab += '<td><input type="button" value="Supprimer la question" onclick="quizz.supprimerQuestion(' + i + ')"></td>';
+                if (i > 1) tab += '<td><input type="button" class="btn" value="Supprimer la question" onclick="quizz.supprimerQuestion(' + i + ')"></td>';
                 tab += '</tr>';
                 tab += '</table>';
             }
@@ -253,8 +253,8 @@ var getLocal = (function () {
                 if (dlocal !== undefined && dlocal !== null && dlocal != '{}') {
                     local = JSON.parse(dlocal);
                     document.querySelector("#localQuizz").innerHTML = '<b>Charger un quizz en cours d\'édition</b>\
-					'+ local.quizz.nom + ' <input type="button" value="Charger" onclick="getLocal.load();">\
-					<input type="button" value="Supprimer le quizz sauvé" onclick="getLocal.delete();">';
+					'+ local.quizz.nom + ' <input type="button" class="btn" value="Charger" onclick="getLocal.load();">\
+					<input type="button" class="btn" value="Supprimer le quizz sauvé" onclick="getLocal.delete();">';
                 }
             }
         },
