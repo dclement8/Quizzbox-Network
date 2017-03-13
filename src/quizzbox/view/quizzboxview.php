@@ -105,7 +105,7 @@ class quizzboxview
 							<a href='".$this->baseURL."'>Quizzbox Network</a>
 						</h1>
 					</header>
-					<div class='conteneur'>
+					
 					<ul id='menu' class='navbar'>
 						".$this->menu($req, $resp, $args)."
 					</ul>
@@ -142,7 +142,7 @@ class quizzboxview
 	private function footer($req, $resp, $args)
 	{
 		$html = "
-					</div>
+					
 					</div>
 					<footer>
 						Quizzbox
@@ -212,7 +212,7 @@ class quizzboxview
 
 	private function afficherCategories($req, $resp, $args)
 	{
-		$html = "<h2>Catégories :</h2>
+		$html = "<h2 class=\"title\">Catégories :</h2>
 		<ul class='elements'>";
 		foreach($this->data as $uneCategorie)
 		{
@@ -620,7 +620,7 @@ class quizzboxview
 
 	private function connexionForm($req, $resp, $args) {
 		$html = <<<EOT
-		<h2>Connexion :</h2>
+		<h2 class="title">Connexion :</h2>
 		<form method="post" action="{$this->baseURL}/connexion">
 			<p><label for="pseudo">Email/Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required /></p>
 			<p><label for="mdp">Mot de passe :</label> <input type="password" name="mdp" maxlength="255" /></p>
@@ -637,7 +637,7 @@ EOT;
 
 	private function inscriptionForm($req, $resp, $args) {
 		$html = <<<EOT
-		<h2>S'inscrire :</h2>
+		<h2 class="title"> S'inscrire :</h2>
 		<form method="post" action="{$this->baseURL}/inscription">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
@@ -676,7 +676,7 @@ EOT;
 			<div id="questions">
 			</div>
 
-			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" class="btn" value="Modifier" onclick="quizz.envoyer()" /></p>
+			<p><input type="button" class="CreerBtn" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" class="btn" value="Modifier" onclick="quizz.envoyer()" /></p>
 		</form>
 		<script type="text/javascript">
 			/* Génération du formulaire au chargement */
