@@ -704,7 +704,7 @@ EOT;
 		$html .= <<<EOT
 			</select></p>
 			<hr />
-			<h3>Questions</h3>
+			<h3 class="title">Questions</h3>
 			<div id="Quizzmsg"></div>
 			<div id="questions">
 			</div>
