@@ -31,6 +31,26 @@
     margin-bottom: 250px;
 }
 
+a {
+    color: red;
+}
+
+a:hover {
+    color: brown;
+}
+
+h1 a {
+    color: white;
+}
+
+h1 a:hover {
+    color: lightgrey;
+}
+
+.strong {
+    font-weight: bold;
+}
+
 /* */
 
 .elements {
@@ -88,7 +108,6 @@
 		width: 38%;
 		flex-basis: 400px;
 		flex-grow: 1;
-		margin-left: 0.5%;
-		margin-right: 0.5%;
+		margin: 0.5%;
 	}
 }
