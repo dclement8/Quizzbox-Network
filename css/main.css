@@ -384,7 +384,7 @@ iframe {
   margin-top: 1em; }
 
 #messageJeu {
-  position: absolute;
+  position: fixed;
   top: 0px;
   text-align: center;
   padding: 5px; }
