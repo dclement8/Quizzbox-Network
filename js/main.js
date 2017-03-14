@@ -204,12 +204,11 @@ var quizz = (function () {
                     tab += '<td>est solution ? <input type="checkbox" onclick="quizz.updateSolution(' + i + ', ' + j + ')"';
                     if (json.quizz.questions[i - 1].reponses[j - 1].estSolution) tab += ' checked';
                     tab += ' />';
-                    if (j > 1) tab += '<input type="button" value="X" onclick="quizz.supprimerReponse(' + i + ', ' + j + ')">';
+                    if (j > 1) tab += '<input type="button" class="btn" value="X" onclick="quizz.supprimerReponse(' + i + ', ' + j + ')">';
                     tab += '</td></tr>';
                 }
 
                 tab += '<tr class="button"><td><input type="button" class="btn" value="Ajouter une réponse" onclick="quizz.ajouterReponse(' + i + ')" /> </td>';
-                tab += '<tr class="button"><td><input type="button" class="btn" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" class="btn" value="Créez le quizz" onclick="quizz.envoyer()" /></td>';
 
                 if (i > 1) tab += '<td><input type="button" class="btn" value="Supprimer la question" onclick="quizz.supprimerQuestion(' + i + ')"></td>';
                 tab += '</tr>';

@@ -709,7 +709,7 @@ EOT;
 			<div id="questions">
 			</div>
 
-			<p><input type="button" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" value="Créer" onclick="quizz.envoyer()" /></p>
+			<p><input type="button" class="btn" value="Ajouter une question" onclick="quizz.ajouterQuestion()" /> <input type="button" class="btn" value="Créer le quizz" onclick="quizz.envoyer()" /></p>
 		</form>
 
 		<script type="text/javascript">
