@@ -248,7 +248,7 @@ class quizzboxview
 			}
 		}
 
-		$html .= "<p>".count($this->data)." quizz trouvé(s)</p>";
+		$html .= "<p class='strong'>".count($this->data)." quizz trouvé(s)</p>";
 		$html .= "<ul class='elements'>";
 		foreach($this->data as $unQuizz)
 		{
@@ -293,7 +293,7 @@ class quizzboxview
 							</li>
 							<li>
 								<form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
-									<button type='submit'>Télécharger le quizz</button>
+									<button class='btn' type='submit'>Télécharger le quizz</button>
 								</form>
 							</li>";
 
@@ -309,12 +309,12 @@ class quizzboxview
 							</li>
 							<li>
 								<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
-									<button type='submit'>Modifier le quizz</button>
+									<button class='btn' type='submit'>Modifier le quizz</button>
 								</form>
 							</li>
 							<li>
 								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
-									<button type='submit'>Supprimer le quizz</button>
+									<button class='btn' type='submit'>Supprimer le quizz</button>
 								</form>
 							</li>
 					";
@@ -326,12 +326,12 @@ class quizzboxview
 						$html .= "
 								<li>
 									<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
-										<button type='submit'>Modifier le quizz</button>
+										<button class='btn' type='submit'>Modifier le quizz</button>
 									</form>
 								</li>
 								<li>
 									<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
-										<button type='submit'>Supprimer le quizz</button>
+										<button class='btn' type='submit'>Supprimer le quizz</button>
 									</form>
 								</li>
 						";
@@ -568,10 +568,10 @@ class quizzboxview
 				{
 					$html .= "
 						<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
-							<button type='submit'>Modifier le quizz</button>
+							<button class='btn' type='submit'>Modifier le quizz</button>
 						</form>
 						<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
-							<button type='submit'>Supprimer le quizz</button>
+							<button class='btn' type='submit'>Supprimer le quizz</button>
 						</form>
 					";
 				}
@@ -637,7 +637,7 @@ EOT;
 
 	private function inscriptionForm($req, $resp, $args) {
 		$html = <<<EOT
-		<h2 class="title"> S''inscrire :</h2>
+		<h2 class="title"> S&#39;inscrire :</h2>
 		<form method="post" action="{$this->baseURL}/inscription">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
