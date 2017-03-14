@@ -83,7 +83,7 @@ class quizzboxview
 				<a href='https://webetu.iutnc.univ-lorraine.fr/www/piguet2u/cms_projettutore/'>Créez votre Quizzbox</a>
 			</li>
 		";
-		
+
 		return $html;
 	}
 
@@ -105,7 +105,7 @@ class quizzboxview
 							<a href='".$this->baseURL."'>Quizzbox Network</a>
 						</h1>
 					</header>
-					
+
 					<ul id='menu' class='navbar'>
 						".$this->menu($req, $resp, $args)."
 					</ul>
@@ -142,7 +142,7 @@ class quizzboxview
 	private function footer($req, $resp, $args)
 	{
 		$html = "
-					
+
 					</div>
 					<footer>
 						Quizzbox
@@ -247,7 +247,7 @@ class quizzboxview
 				$html .= "<h2>".\quizzbox\model\categorie::find($args['id'])->nom." :</h2>";
 			}
 		}
-		
+
 		$html .= "<p>".count($this->data)." quizz trouvé(s)</p>";
 		$html .= "<ul class='elements'>";
 		foreach($this->data as $unQuizz)
@@ -261,7 +261,7 @@ class quizzboxview
 						<b>Détails :</b>
 						<ul>
 			";
-			
+
 			if(isset($unQuizz->id_joueur))
 			{
 				$html .= "
@@ -274,14 +274,14 @@ class quizzboxview
 			else
 			{
 				// Cas où l'administrateur créé le quizz : id_joueur = NULL
-				
+
 				$html .= "
 					<li>
 						<b>Créateur :</b> Administrateur
 					</li>
 				";
 			}
-			
+
 			$html .= "
 							<li>
 								<b>Nombre de questions : </b>
@@ -637,7 +637,7 @@ EOT;
 
 	private function inscriptionForm($req, $resp, $args) {
 		$html = <<<EOT
-		<h2 class="title"> S'inscrire :</h2>
+		<h2 class="title"> S''inscrire :</h2>
 		<form method="post" action="{$this->baseURL}/inscription">
 			<p><label for="pseudo">Pseudo :</label> <input type="text" name="pseudo" maxlength="255" value="{$args['pseudo']}" required/></p>
 			<p><label for="email">E-mail :</label> <input type="email" name="email" maxlength="256" required/></p>
@@ -801,7 +801,7 @@ EOT;
 
 		return $html;
 	}
-	
+
 	private function recupForm($req, $resp, $args)
 	{
 		$html = "
@@ -830,31 +830,6 @@ EOT;
 
 		// Sélectionne automatiquement le sélecteur.
 		$html .= $this->$selector($req, $resp, $args);
-
-		/*switch($selector)
-		{
-			case "afficherCategories":
-				$html .= $this->afficherCategories($req, $resp, $args);
-				break;
-			case "afficherQuizz":
-				$html .= $this->afficherQuizz($req, $resp, $args);
-				break;
-			case "connexionForm":
-				$html .= $this->connexionForm($req, $resp, $args);
-				break;
-			case "connexionTraitement":
-				$html .= $this->connexionTraitement($req, $resp, $args);
-				break;
-			case "inscriptionForm":
-				$html .= $this->inscriptionForm($req, $resp, $args);
-				break;
-			case "inscriptionTraitement":
-				$html .= $this->inscriptionTraitement($req, $resp, $args);
-				break;
-			case "creer":
-				$html .= $this->creer($req, $resp, $args);
-				break;
-		}*/
 
 		$html .= $this->footer($req, $resp, $args);
 

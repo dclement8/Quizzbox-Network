@@ -31,4 +31,38 @@
     margin-bottom: 250px;
 }
 
+/* */
 
+.elements {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.elements > li {
+	width: 100%;
+	border: 1px solid #CCCCCC;
+	padding: .5rem;
+    list-style-type: none;
+    overflow: auto;
+}
+
+.elements > li:hover {
+	background-color: #D2D2D2;
+}
+
+/* Desktop */
+@media screen and (min-width: 600px) {
+	.elements { flex-direction: row; }
+
+	.elements > li {
+		width: 38%;
+		flex-basis: 400px;
+		flex-grow: 1;
+		margin-left: 0.5%;
+		margin-right: 0.5%;
+	}
+}
