@@ -40,18 +40,44 @@
 	width: 100%;
     padding: 0;
     margin: 0;
+    margin-bottom: 40px;
+}
+
+.elements li {
+    list-style-type: none;
+}
+
+.elements b {
+    color: #333333;
+}
+
+.elements h1 {
+    font-size: 24px;
+    text-align: center;
+    color: white;
+    background: red;
+}
+
+.elements h2 {
+    font-size: 18px;
+    color: #333333;
 }
 
 .elements > li {
 	width: 100%;
 	border: 1px solid #CCCCCC;
 	padding: .5rem;
-    list-style-type: none;
     overflow: auto;
+    background: white;
 }
 
 .elements > li:hover {
 	background-color: #D2D2D2;
+}
+
+.elements > li button {
+    width: 100%;
+    padding: 5px;
 }
 
 /* Desktop */
