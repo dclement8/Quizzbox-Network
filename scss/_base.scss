@@ -416,3 +416,15 @@ iframe
 	overflow-x:visible;
 	box-sizing: border-box;
 }
+
+#message
+{
+	font-size: 0.9em;
+	padding: 5px;
+	background-color: #BBB;
+	border-bottom-color: red;
+	box-sizing: border-box;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	color: black;
+}
