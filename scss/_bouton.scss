@@ -2,7 +2,7 @@ $default: white;
 $red: red;
 $green: green;
 $blue: blue;
-$defaultColorFont: #333333;
+$defaultColorFont: #111;
 $dark: black;
 
 .btn
@@ -11,7 +11,7 @@ $dark: black;
 	padding:7px;
 	border-width:3px;
 	text-align:center;
-	background-color:darken($default, 10%);
+	background-color:darken($default, 30%);
 	color:$defaultColorFont;
 	border-style:outset;
 	border-radius: 7px;

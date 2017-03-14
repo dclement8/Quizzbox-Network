@@ -170,7 +170,7 @@ ul li
 }
 .conteneur
 {
-	background-color:#999999;
+	background-color:#BBB;
 	padding:10px;
 	font-size:0px;
 
@@ -229,7 +229,11 @@ section, form
 		margin-bottom:10px;
 	}
 
-	.btn { width:300px; }
+	.btn 
+	{
+		max-width:300px;
+		width:100%;
+	}
 }
 
 .line section
@@ -350,7 +354,10 @@ footer
 	padding: .4rem;
 	width:100%;
 	font-size: .8rem;
-	position: fixed; bottom: 0; left: 0; right: 0;
+	position: relative;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 div.line div, div.line-margin div {
@@ -391,6 +398,7 @@ fieldset { margin: 0 10px 0; }
 	margin: 0px;
 	font-size: 1.5em;
 	height: 100%;
+	min-width: 1px;
 }
 
 #recherche > button
@@ -434,12 +442,14 @@ iframe
 	font-size:2em;
 	color:black;
 	margin-top:1em;
+	padding-right: 25px;
 }
 
 #jeuAvancement
 {
 	margin-top:1em;
 	font-size:1em;
+	width: 100%;
 }
 
 #jeuAvancement > .avancementQuestion
@@ -450,6 +460,8 @@ iframe
 	color:white;
 	margin-right:3px;
 	margin-top:1em;
+	width: 3em;
+	display: inline-block;
 }
 
 #jeuEnnonce
@@ -501,4 +513,9 @@ iframe
 #jeuRepondre
 {
 	margin-top:1.5em;
+}
+
+.block > ul > li > form
+{
+	margin-left:-40px;
 }
