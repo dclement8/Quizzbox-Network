@@ -68,6 +68,10 @@ $app->get('/categories/{id}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->afficherQuizz($req, $resp, $args);
 })->setName('afficherQuizz');
 
+$app->post('/categories/{id}', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->supprimerCategorie($req, $resp, $args);
+})->setName('supprimerCategorie')->add(new quizzbox\utils\authentificationAdmin());
+
 $app->get('/inscription', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->inscriptionForm($req, $resp, $args);
 })->setName('inscriptionForm');

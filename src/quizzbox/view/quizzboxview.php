@@ -230,6 +230,23 @@ class quizzboxview
 						<b>Nombre de quizz : </b>
 						".\quizzbox\model\quizz::where('id_categorie', $uneCategorie->id)->count()."
 					</p>
+			";
+			
+			if(isset($_SESSION["login"]))
+			{
+				if($_SESSION["login"] == "admin")
+				{
+					$html .= "
+					<p>
+						<form method='post' action='".$this->baseURL."/categories/".$uneCategorie->id."' onsubmit=\"return confirm('Voulez-vous vraiment supprimer la catégorie et les quizz qui y sont associés ?');\">
+							<button class='btn' type='submit'>Supprimer la catégorie</button>
+						</form>
+					</p>
+					";
+				}
+			}
+			
+			$html .= "
 				</li>
 			";
 		}
@@ -305,7 +322,7 @@ class quizzboxview
 					$html .= "
 							<li>
 								<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/vider' onsubmit=\"return confirm('Voulez-vous vraiment supprimer les scores enregistrés sur ce quizz ?');\">
-									<button type='submit'>Supprimer les scores de ce quizz</button>
+									<button type='submit' class='btn'>Supprimer les scores de ce quizz</button>
 								</form>
 							</li>
 							<li>

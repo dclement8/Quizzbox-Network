@@ -986,4 +986,31 @@ class quizzboxcontrol
 			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 		}
 	}
+	
+	public function supprimerCategorie(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		
+		if(\quizzbox\model\categorie::where('id', $id)->get()->toJson() != "[]")
+		{
+			$lesQuizz = \quizzbox\model\quizz::where('id_categorie', $id)->get();
+			foreach($lesQuizz as $unQuizz)
+			{
+				\quizzbox\model\reponse::where('id_quizz', $unQuizz->id)->delete();
+				\quizzbox\model\question::where('id_quizz', $unQuizz->id)->delete();
+				\quizzbox\model\quizz::find($unQuizz->id)->scores()->detach();
+				\quizzbox\model\quizz::destroy($unQuizz->id);
+			}
+			
+			\quizzbox\model\categorie::destroy($id);
+			
+			$_SESSION["message"] = 'La catégorie et ses quizz sont supprimés !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+		else
+		{
+			$_SESSION["message"] = 'Catégorie introuvable !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
 }
