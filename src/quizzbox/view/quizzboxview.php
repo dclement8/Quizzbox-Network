@@ -588,7 +588,7 @@ class quizzboxview
 			$nomRecherche = str_replace(" ","+",$unQuizz->nom);
 			$html .= "
 				<li class='block'>
-					<h1><a href='".$this->baseURL."/recherche/?q=".$nomRecherche."'>".$unQuizz->nom."</a></h1>
+					<h1><a href='".$this->baseURL."/recherche?q=".$nomRecherche."'>".$unQuizz->nom."</a></h1>
 					<ul>
 						<li><form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
 								<button class='btn' type='submit'>Télécharger le quizz</button>
@@ -635,7 +635,7 @@ class quizzboxview
 			$nomRecherche = str_replace(" ","+",$unQuizz->nom);
 			$html .= "
 				<li class='block'>
-					<h1><a href='".$this->baseURL."/recherche/?q=".$nomRecherche."'>".$leQuizz->nom."</a></h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p><br/><form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
+					<h1><a href='".$this->baseURL."/recherche?q=".$nomRecherche."'>".$leQuizz->nom."</a></h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p><br/><form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
 								<button class='btn' type='submit'>Télécharger le quizz</button>
 							</form></li>
 				</li>
