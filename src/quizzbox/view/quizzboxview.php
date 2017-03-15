@@ -360,53 +360,59 @@ class quizzboxview
 			$html .= "
 						</ul>
 					</p>
-					<h2>Classement des 10 meilleurs joueurs :</h2>
-					<button class=\"btn btn-red classementBouton\" style='max-width:300px;'>↓ Afficher le classement ↓</button>
-					<table class='classement'>
-						<tr>
-							<th>Position</th>
-							<th>Joueur</th>
-							<th>Score</th>
-							<th>Date/heure</th>
-						</tr>
-						";
-
-			$scores = \quizzbox\model\quizz::find($unQuizz->id)->scores()->orderBy('score', 'DESC')->take(10)->get();
-			$position = 1;
-			foreach($scores as $unScore)
+			";
+			
+			if(\quizzbox\model\quizz::find($unQuizz->id)->scores()->orderBy('score', 'DESC')->take(10)->count() != 0)
 			{
-				$color = false;
-				if(isset($_SESSION["login"]))
+				$html .= "
+						<h2>Classement des 10 meilleurs joueurs :</h2>
+						<button class=\"btn btn-red classementBouton\" style='max-width:300px;'>↓ Afficher le classement ↓</button>
+						<table class='classement'>
+							<tr>
+								<th>Position</th>
+								<th>Joueur</th>
+								<th>Score</th>
+								<th>Date/heure</th>
+							</tr>
+							";
+
+				$scores = \quizzbox\model\quizz::find($unQuizz->id)->scores()->orderBy('score', 'DESC')->take(10)->get();
+				$position = 1;
+				foreach($scores as $unScore)
 				{
-					if($_SESSION["login"] == $unScore->pivot->id_joueur)
+					$color = false;
+					if(isset($_SESSION["login"]))
 					{
-						$color = true;
+						if($_SESSION["login"] == $unScore->pivot->id_joueur)
+						{
+							$color = true;
+						}
 					}
+
+					if($color == true)
+					{
+						$html .= "<tr style='background-color:#FF7777'>";
+					}
+					else
+					{
+						$html .= "<tr>";
+					}
+
+					$html .= "
+							<td>".$position."</td>
+							<td><a href='".$this->baseURL."/profil/".$unScore->pivot->id_joueur."'>".\quizzbox\model\joueur::find($unScore->pivot->id_joueur)->pseudo."</a></td>
+							<td>".$unScore->pivot->score."</td>
+							<td>".$unScore->pivot->dateHeure."</td>
+						</tr>
+					";
+					$position++;
 				}
 
-				if($color == true)
-				{
-					$html .= "<tr style='background-color:#FF7777'>";
-				}
-				else
-				{
-					$html .= "<tr>";
-				}
 
 				$html .= "
-						<td>".$position."</td>
-						<td><a href='".$this->baseURL."/profil/".$unScore->pivot->id_joueur."'>".\quizzbox\model\joueur::find($unScore->pivot->id_joueur)->pseudo."</a></td>
-						<td>".$unScore->pivot->score."</td>
-						<td>".$unScore->pivot->dateHeure."</td>
-					</tr>
+						</table>
 				";
-				$position++;
 			}
-
-
-			$html .= "
-					</table>
-			";
 
 			if(isset($_SESSION["login"]))
 			{
