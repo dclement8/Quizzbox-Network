@@ -165,3 +165,11 @@ table
 		width: 100%;
 	}
 }
+
+table[id^=question_]
+{
+	margin-bottom:2em;
+	border-color: black;
+	border-width: 2px;
+	border-style: solid;
+}
