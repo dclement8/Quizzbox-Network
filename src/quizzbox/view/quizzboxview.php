@@ -602,7 +602,7 @@ class quizzboxview
 
 			$html .= "
 				<li class='block'>
-					<h1><a href='".$this->baseURL."/quizz/".$leQuizz->tokenWeb."/download'>".$leQuizz->nom."</a><h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p>
+					<h1><a href='".$this->baseURL."/quizz/".$leQuizz->tokenWeb."/download'>".$leQuizz->nom."</a></h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p>
 				</li>
 			";
 		}
