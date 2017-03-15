@@ -123,3 +123,45 @@ h1 a:hover {
 {
 	display:none;
 }
+
+#questions
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+table
+{
+	width: 100%;
+	border-collapse: collapse;
+}
+
+#questions input[type="text"]
+{
+	flex: auto;
+	display: flex;
+	width: 100%;
+}
+
+@media screen and (max-width: 800px)
+{
+	table, thead, tbody, th, td, tr
+	{
+		display: block;
+	}
+	
+	td
+	{
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+	
+	#questions input[type="text"]
+	{
+		flex: auto;
+		display: flex;
+		width: 100%;
+	}
+}
