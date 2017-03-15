@@ -150,6 +150,7 @@ class quizzboxview
 					<script src='".$this->baseURL."/js/jquery.min.js'></script>
 					<script src='".$this->baseURL."/js/main.js'></script>
 					<script src='".$this->baseURL."/js/coche.js'></script>
+					<script type='text/javascript' src='".$this->baseURL."/js/classement.js'></script>
 				</body>
 			</html>
 		";
@@ -343,6 +344,7 @@ class quizzboxview
 						</ul>
 					</p>
 					<h2>Classement des 10 meilleurs joueurs :</h2>
+					<button class=\"btn btn-red classementBouton\" style='max-width:300px;'>↓ Afficher le classement ↓</button>
 					<table class='classement'>
 						<tr>
 							<th>Position</th>
@@ -691,7 +693,7 @@ EOT;
 	private function creer($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
-		Un quizz doit comporter au moins 1 question et 2 réponses et chaque question doit avoir au moins une réponse de juste.<br/>
+		Un quizz doit comporter au moins 1 question et 2 réponses et chaque question doit avoir au moins une réponse de juste.<br/><br/>
 		<div id="localQuizz"></div>
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
 			<input type="hidden" name="json" id="json" />
