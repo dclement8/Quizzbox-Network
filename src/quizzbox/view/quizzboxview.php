@@ -570,7 +570,7 @@ class quizzboxview
 				$html .= "
 				<li>
 					<form method='post' action='".$this->baseURL."/profil/".$this->data->id."/supprimer/' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce joueur ?');\">
-						<button type='submit'>Supprimer le joueur</button>
+						<button class='btn' type='submit'>Supprimer le joueur</button>
 					</form>
 				</li>";
 			}
@@ -585,9 +585,14 @@ class quizzboxview
 		$quizzCrees = \quizzbox\model\quizz::where("id_joueur", $this->data->id)->get();
 		foreach($quizzCrees as $unQuizz)
 		{
+			$nomRecherche = str_replace(" ","+",$unQuizz->nom);
 			$html .= "
 				<li class='block'>
-					<h1><a href='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>".$unQuizz->nom."</a></h1>
+					<h1><a href='".$this->baseURL."/recherche/?q=".$nomRecherche."'>".$unQuizz->nom."</a></h1>
+					<ul>
+						<li><form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
+								<button class='btn' type='submit'>Télécharger le quizz</button>
+							</form></li>
 			";
 
 			if(isset($_SESSION["login"]))
@@ -595,19 +600,19 @@ class quizzboxview
 				if($_SESSION["login"] == $this->data->id)
 				{
 					$html .= "
-						<ul>
+						
 							<li><form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
 								<button class='btn' type='submit'>Modifier le quizz</button>
 							</form></li>
 							<li><form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
 								<button class='btn' type='submit'>Supprimer le quizz</button>
 							</form></li>
-						</ul>
 					";
 				}
 			}
 
 			$html .= "
+					</ul>
 				</li>
 			";
 		}
