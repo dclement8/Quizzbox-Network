@@ -632,10 +632,12 @@ class quizzboxview
 		foreach($quizzJoues as $unQuizz)
 		{
 			$leQuizz = \quizzbox\model\quizz::where('id', $unQuizz->pivot->id_quizz)->first();
-
+			$nomRecherche = str_replace(" ","+",$unQuizz->nom);
 			$html .= "
 				<li class='block'>
-					<h1><a href='".$this->baseURL."/quizz/".$leQuizz->tokenWeb."/download'>".$leQuizz->nom."</a></h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p>
+					<h1><a href='".$this->baseURL."/recherche/?q=".$nomRecherche."'>".$leQuizz->nom."</a></h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p><br/><form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
+								<button class='btn' type='submit'>Télécharger le quizz</button>
+							</form></li>
 				</li>
 			";
 		}
