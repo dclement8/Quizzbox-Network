@@ -551,15 +551,15 @@ class quizzboxview
 		$html .= "
 			<li>
 				<h3>Quizz créés par ".$this->data->pseudo." :</h3>
-				<ul>
+				<ul class='elements'>
 		";
 
 		$quizzCrees = \quizzbox\model\quizz::where("id_joueur", $this->data->id)->get();
 		foreach($quizzCrees as $unQuizz)
 		{
 			$html .= "
-				<li>
-					<a href='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>".$unQuizz->nom."</a>
+				<li class='block'>
+					<h1><a href='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>".$unQuizz->nom."</a></h1>
 			";
 
 			if(isset($_SESSION["login"]))
@@ -567,12 +567,14 @@ class quizzboxview
 				if($_SESSION["login"] == $this->data->id)
 				{
 					$html .= "
-						<form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
-							<button class='btn' type='submit'>Modifier le quizz</button>
-						</form>
-						<form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
-							<button class='btn' type='submit'>Supprimer le quizz</button>
-						</form>
+						<ul>
+							<li><form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
+								<button class='btn' type='submit'>Modifier le quizz</button>
+							</form></li>
+							<li><form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
+								<button class='btn' type='submit'>Supprimer le quizz</button>
+							</form></li>
+						</ul>
 					";
 				}
 			}
@@ -590,7 +592,7 @@ class quizzboxview
 		$html .= "
 			<li>
 				<h3>Quizz joués par ".$this->data->pseudo." :</h3>
-				<ul>
+				<ul class='elements'>
 		";
 
 		$quizzJoues = \quizzbox\model\joueur::find($this->data->id)->scores()->get();
@@ -599,8 +601,8 @@ class quizzboxview
 			$leQuizz = \quizzbox\model\quizz::where('id', $unQuizz->pivot->id_quizz)->first();
 
 			$html .= "
-				<li>
-					<a href='".$this->baseURL."/quizz/".$leQuizz->tokenWeb."/download'>".$leQuizz->nom."</a> - Score à battre : ".$unQuizz->pivot->score."
+				<li class='block'>
+					<h1><a href='".$this->baseURL."/quizz/".$leQuizz->tokenWeb."/download'>".$leQuizz->nom."</a><h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p>
 				</li>
 			";
 		}

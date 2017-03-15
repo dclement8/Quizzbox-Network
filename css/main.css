@@ -419,6 +419,9 @@ iframe {
 .block > ul > li > form {
   margin-left: -40px; }
 
+.profil > li {
+  list-style-type: none; }
+
 .btn {
   font-size: 16px;
   padding: 7px;
