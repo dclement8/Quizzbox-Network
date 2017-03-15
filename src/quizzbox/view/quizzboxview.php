@@ -247,6 +247,9 @@ class quizzboxview
 			}
 			
 			$html .= "
+					<p>
+						<a href='".$this->baseURL."/categories/".$uneCategorie->id."'>Consulter les quizz</a>
+					</p>
 				</li>
 			";
 		}
