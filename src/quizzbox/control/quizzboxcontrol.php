@@ -1013,4 +1013,42 @@ class quizzboxcontrol
 			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
 		}
 	}
+	
+	public function editFormCategorie(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		
+		if(\quizzbox\model\categorie::where('id', $id)->get()->toJson() != "[]")
+		{
+			$laCategorie = \quizzbox\model\categorie::find($id);
+			
+			return (new \quizzbox\view\quizzboxview($laCategorie))->render('editFormCategorie', $req, $resp, $args);
+		}
+		else
+		{
+			$_SESSION["message"] = 'Catégorie introuvable !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
+	
+	public function editCategorie(Request $req, Response $resp, $args)
+	{
+		$id = filter_var($args['id'], FILTER_SANITIZE_NUMBER_INT);
+		
+		if(\quizzbox\model\categorie::where('id', $id)->get()->toJson() != "[]")
+		{
+			$laCategorie = \quizzbox\model\categorie::find($id);
+			$laCategorie->nom = filter_var($_POST["categorieForm"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+			$laCategorie->description = filter_var($_POST["descriptionForm"], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+			$laCategorie->save();
+			
+			$_SESSION["message"] = 'Catégorie modifiée !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+		else
+		{
+			$_SESSION["message"] = 'Catégorie introuvable !';
+			return (new \quizzbox\control\quizzboxcontrol($this))->accueil($req, $resp, $args);
+		}
+	}
 }

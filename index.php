@@ -72,6 +72,14 @@ $app->post('/categories/{id}', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->supprimerCategorie($req, $resp, $args);
 })->setName('supprimerCategorie')->add(new quizzbox\utils\authentificationAdmin());
 
+$app->get('/categories/{id}/edit', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->editFormCategorie($req, $resp, $args);
+})->setName('editFormCategorie')->add(new quizzbox\utils\authentificationAdmin());
+
+$app->post('/categories/{id}/edit', function (Request $req, Response $resp, $args) {
+	return (new quizzbox\control\quizzboxcontrol($this))->editCategorie($req, $resp, $args);
+})->setName('editCategorie')->add(new quizzbox\utils\authentificationAdmin());
+
 $app->get('/inscription', function (Request $req, Response $resp, $args) {
 	return (new quizzbox\control\quizzboxcontrol($this))->inscriptionForm($req, $resp, $args);
 })->setName('inscriptionForm');

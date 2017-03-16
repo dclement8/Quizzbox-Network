@@ -238,6 +238,11 @@ class quizzboxview
 				{
 					$html .= "
 					<p>
+						<form method='get' action='".$this->baseURL."/categories/".$uneCategorie->id."/edit'>
+							<button class='btn' type='submit'>Editer la catégorie</button>
+						</form>
+					</p>
+					<p>
 						<form method='post' action='".$this->baseURL."/categories/".$uneCategorie->id."' onsubmit=\"return confirm('Voulez-vous vraiment supprimer la catégorie et les quizz qui y sont associés ?');\">
 							<button class='btn' type='submit'>Supprimer la catégorie</button>
 						</form>
@@ -693,6 +698,7 @@ EOT;
 	private function modifierQuizz($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
+		<h2 class='title'>Editeur de quizz :</h2>
 		<div id="localQuizz"></div>
 		<div id="Quizzmsg"></div>
 		<form method="post" id="formulaire" action="{$this->baseURL}/modifier/{$args['id']}">
@@ -726,6 +732,7 @@ EOT;
 	private function creer($req, $resp, $args) {
 		// Les questions et réponses sont stockées dans le input json avec le format JSON, voir main.js
 		$html = <<<EOT
+		<h2 class='title'>Editeur de quizz :</h2>
 		Un quizz doit comporter au moins 1 question et 2 réponses et chaque question doit avoir au moins une réponse de juste.<br/><br/>
 		<div id="localQuizz"></div>
 		<form method="post" id="formulaire" action="{$this->baseURL}/creer">
@@ -827,6 +834,7 @@ EOT;
 	private function creerCategorieForm($req, $resp, $args)
 	{
 		$html = "
+			<h2 class='title'>Créer une catégorie :</h2>
 			<form name='post' action='".$this->baseURL."/categories/creer' method='post'>
 				<label for='categorieForm'>Nom de catégorie</label>
 				<input type='text' id='categorieForm' name='categorieForm' placeholder='Nom de catégorie' required />
@@ -842,6 +850,7 @@ EOT;
 	private function recupForm($req, $resp, $args)
 	{
 		$html = "
+			<h2 class='title'>Récupération de mot de passe :</h2>
 			<form name='post' action='".$this->baseURL."/oubli/".$args['token']."' method='post'>
 				<label for='pseudoEmailForm'>Pseudo/Email</label>
 				<input type='text' id='pseudoEmailForm' name='pseudoEmailForm' placeholder='Pseudo/Email' required /><br/>
@@ -850,6 +859,22 @@ EOT;
 				<label for='newMdp2Form'>Confirmer le mot de passe </label>
 				<input type='password' id='newMdp2Form' name='newMdp2Form' placeholder='Confirmez le nouveau mot de passe' required /><br/>
 				<button class=\"btn\" type='submit'>Récupérer le compte</button>
+			</form>
+		";
+
+		return $html;
+	}
+	
+	private function editFormCategorie($req, $resp, $args)
+	{
+		$html = "
+			<h2 class='title'>Modifier une catégorie :</h2>
+			<form name='post' action='".$this->baseURL."/categories/".$args['id']."/edit' method='post'>
+				<label for='categorieForm'>Nom de catégorie</label>
+				<input type='text' id='categorieForm' name='categorieForm' placeholder='Nom de catégorie' required value='".$this->data->nom."' />
+				<label for='descriptionForm'>Description </label>
+				<input type='text' id='descriptionForm' name='descriptionForm' placeholder='Description de la catégorie' required value='".$this->data->description."' />
+				<button class=\"btn\" type='submit'>Modifier la catégorie</button>
 			</form>
 		";
 
