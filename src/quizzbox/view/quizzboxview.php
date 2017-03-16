@@ -602,7 +602,7 @@ class quizzboxview
 
 			if(isset($_SESSION["login"]))
 			{
-				if($_SESSION["login"] == $this->data->id)
+				if(($_SESSION["login"] == $this->data->id) || ($_SESSION["login"] == "admin"))
 				{
 					$html .= "
 						
@@ -640,11 +640,28 @@ class quizzboxview
 			$nomRecherche = str_replace(" ","+",$unQuizz->nom);
 			$html .= "
 				<li class='block'>
-					<h1><a href='".$this->baseURL."/recherche?q=".$nomRecherche."'>".$leQuizz->nom."</a></h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p><br/><form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
+					<h1><a href='".$this->baseURL."/recherche?q=".$nomRecherche."'>".$leQuizz->nom."</a></h1><p><b>Score à battre : </b>".$unQuizz->pivot->score."</p><br/><ul><li><form method='get' action='".$this->baseURL."/quizz/".$unQuizz->tokenWeb."/download'>
 								<button class='btn' type='submit'>Télécharger le quizz</button>
 							</form></li>
-				</li>
 			";
+			
+			if(isset($_SESSION["login"]))
+			{
+				if(($_SESSION["login"] == $this->data->id) || ($_SESSION["login"] == "admin"))
+				{
+					$html .= "
+						
+							<li><form method='get' action='".$this->baseURL."/modifier/".$unQuizz->tokenWeb."'>
+								<button class='btn' type='submit'>Modifier le quizz</button>
+							</form></li>
+							<li><form method='post' action='".$this->baseURL."/quizz/".$unQuizz->id."/supprimer' onsubmit=\"return confirm('Voulez-vous vraiment supprimer ce quizz ?');\">
+								<button class='btn' type='submit'>Supprimer le quizz</button>
+							</form></li>
+					";
+				}
+			}
+			
+			$html .= "</ul></li>";
 		}
 
 		$html .= "
