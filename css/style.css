@@ -173,3 +173,11 @@ table[id^=question_]
 	border-width: 2px;
 	border-style: solid;
 }
+
+@media screen and (max-width: 350px)
+{
+	.navbar li
+	{
+		width: 100%;
+	}
+}
