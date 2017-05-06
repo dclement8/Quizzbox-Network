@@ -11,7 +11,7 @@ Plateforme communautaire.
 
 # Configuration serveur
 ```
-git clone https://github.com/hitoshi54/Quizzbox-Network.git
+git clone https://github.com/dclement8/Quizzbox-Network.git
 ```
 Dans le répertoire conf de Quizzbox-Network se trouve config.ini.modele.
 C'est le modèle du fichier de configuration que vous devez créer pour la connexion à la base de données (config.ini).
